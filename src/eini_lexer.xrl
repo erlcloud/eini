@@ -3,6 +3,7 @@ Definitions.
 A = [a-z][a-zA-Z0-9_\.]
 D = [0-9]
 S = [\s\t]
+B = [\n]
 
 Rules.
 
@@ -16,6 +17,7 @@ Rules.
 {S}*{D}+\.{D}+ : {token,{value,TokenLine,to_float(TokenChars)}}.
 {S}*".+" : {token,{value,TokenLine,to_string(TokenChars)}}.
 {S}*[^=\[;""\n]+ : {token,{value,TokenLine,string:strip(TokenChars)}}.
+{B}+ : {token, {'$break',TokenLine}}.
 ;.* : skip_token.
 [\000-\s]+ : skip_token.
 
