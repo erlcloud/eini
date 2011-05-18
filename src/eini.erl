@@ -5,7 +5,7 @@
 parse_string(String) when is_binary(String) ->
     parse_string(binary_to_list(String));
 parse_string(String) when is_list(String) ->
-    {ok, Tokens, _} = eini:string(String),
+    {ok, Tokens, _} = eini_lexer:string(String),
     eini_parser:parse(Tokens).
 
 parse_file(Filename) ->
