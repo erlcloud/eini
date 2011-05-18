@@ -1,7 +1,7 @@
-{application, zucchini, [
+{application, eini, [
     {description, "An Erlang INI parser"},
-    {vsn, "0.1"},
+    {vsn, "0.1.0"},
     {applications, [kernel, stdlib]},
-    {modules, [zucchini, zucchini_lexer, zucchini_parser]},
+    {modules, []},
     {registered, []}
 ]}.

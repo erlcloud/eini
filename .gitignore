@@ -1,2 +1,5 @@
 .DS_Store
 *.beam
+src/eini_parser.erl
+src/eini_lexer.erl
+ebin/*.app
