@@ -17,8 +17,8 @@ empty_test_() ->
    fun setup/0,
    fun teardown/1,
    [
-    ?_assertEqual([], parse_string("")),
-    ?_assertEqual([], parse_string("\n"))
+    ?_assertEqual({ok, []}, parse_string("")),
+    ?_assertEqual({ok, []}, parse_string("\n"))
    ]}.
 
 empty_one_title_test_() ->
@@ -26,7 +26,7 @@ empty_one_title_test_() ->
    fun setup/0,
    fun teardown/1,
    [
-    ?_assertEqual([title, []], parse_string("[title]\n"))
+    ?_assertEqual({ok, ["title", []]}, parse_string("[title]\n"))
    ]}.
 
 syntax_error_title_test() ->
