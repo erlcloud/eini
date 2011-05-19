@@ -19,22 +19,32 @@
 
 Definitions.
 
-A = [a-z][a-zA-Z0-9_\.]
-D = [0-9]
+A = [a-z][a-zA-Z0-9_\.]*
 S = [\s\t]
 B = [\n\r]
 
 Rules.
 
+%% skip comment line,which has ; at the beginning of line
 {B};.*{B}        : {skip_token, "\n"}.
+
+%% skip empty lines or lines with space/tab chars
 {B}{S}*{B}       : {skip_token, "\n"}.
+
+%% mark line break by token 'break' in order to use as delimiters
 {B}              : {token, {break,   TokenLine, TokenChars}}.
+
+%% Just chars
 =                : {token, {'=',     TokenLine}}.
 \[               : {token, {'[',     TokenLine}}.
 \]               : {token, {']',     TokenLine}}.
+
+%% word-like tokens
 {S}+             : {token, {blank,   TokenLine, TokenChars}}.
-"{A}*"           : {token, {quoted,  TokenLine, TokenChars}}.
-{A}*             : {token, {word,    TokenLine, TokenChars}}.
+"{A}"           : {token, {quoted,  TokenLine, TokenChars}}.
+{A}             : {token, {word,    TokenLine, TokenChars}}.
+
+%% comment-like token, but may be a part of value depending on the location
 ;.*              : {token, {comment, TokenLine, TokenChars}}.
 
 Erlang code.
