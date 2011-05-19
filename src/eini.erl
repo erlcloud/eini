@@ -17,6 +17,8 @@
 
 -module(eini).
 
+-author("shino@accense.com").
+
 -export([parse_string/1, parse_file/1]).
 %% for debug use
 -export([lex/1, parse_tokens/1]).
