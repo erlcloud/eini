@@ -26,14 +26,16 @@ B = [\n\r]
 
 Rules.
 
+{B};.*{B}        : {skip_token, "\n"}.
+{B}{S}*{B}       : {skip_token, "\n"}.
+{B}              : {token, {break,   TokenLine, TokenChars}}.
 =                : {token, {'=',     TokenLine}}.
 \[               : {token, {'[',     TokenLine}}.
 \]               : {token, {']',     TokenLine}}.
 {S}+             : {token, {blank,   TokenLine, TokenChars}}.
-"{A}+"           : {token, {quoted,  TokenLine, TokenChars}}.
-{A}+             : {token, {word,    TokenLine, TokenChars}}.
-;.*{B}+          : {token, {comment, TokenLine, TokenChars}, "\n"}.
-{B}+             : {token,  {break, TokenLine, "\n"}}.
+"{A}*"           : {token, {quoted,  TokenLine, TokenChars}}.
+{A}*             : {token, {word,    TokenLine, TokenChars}}.
+;.*              : {token, {comment, TokenLine, TokenChars}}.
 %% {S}*{A}+         : {token, {value, TokenLine, to_atom(TokenChars)}}.
 %% {S}*{D}+         : {token, {value, TokenLine, to_integer(TokenChars)}}.
 %% {S}*{D}+\.{D}+   : {token, {value, TokenLine, to_float(TokenChars)}}.

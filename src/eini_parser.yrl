@@ -19,28 +19,50 @@
 
 Nonterminals
   sections section
+  title_part
   title
+%%   skip_lines
+%%   blank_line
+%%   comment_line
   properties property
   values single_value.
 
 Terminals
   '[' ']' '='
+  end_of_file
   blank
   word quoted
-  comment break.
+  comment
+  break.
 
 Rootsymbol sections.
 
 %% Empty file                                                
-
-sections -> '$empty' : [].
+sections -> end_of_file : [].
+sections -> break end_of_file : [].
+sections -> section : ['$1'].
 sections -> section sections : ['$1' | '$2'].
 
-%% section -> '[' word ']' break properties : {'$3', '$6'}.
-section -> title break properties : {'$1', '$3'}.
+section -> title_part properties : {'$1', '$2'}.
 
-title -> '[' word ']'.
+title_part -> title break : '$1'.
+title_part -> break title break : '$2'.
+%% title_part -> title blank break : '$1'.
+%% title_part -> skip_lines title break : '$2'.
+%% title_part -> skip_lines title blank break : '$2'.
 
+title -> '[' word ']' : '$2'.
+title -> '[' word ']' blank : '$2'.
+
+%% skip_lines -> blank_line skip_lines.
+%% skip_lines -> comment_line skip_lines.
+
+%% blank_line -> break.  
+%% blank_line -> blank break.  
+
+%% comment_line -> comment break.
+
+properties -> end_of_file : [].
 properties -> property : ['$1'].
 properties -> property properties : ['$1' | '$2'].
 
@@ -50,10 +72,11 @@ values -> single_value : ['$1'].
 values -> single_value values : ['$1' | '$2'].
 
 single_value ->  word : '$1'.
-single_value -> '[' : '['.
-single_value -> '=' : '='.
-single_value -> ']' : ']'.
-
+single_value ->  blank : '$1'.
+single_value ->  comment : '$1'.
+single_value -> '[' : "[".
+single_value -> '=' : "=".
+single_value -> ']' : "]".
 
 
 Erlang code.
