@@ -6,9 +6,17 @@
 -include_lib("eunit/include/eunit.hrl").
 
 main(_) ->
-  code:add_patha("./ebin/"),
+  code:add_patha("../ebin/"),
   go(""),
+  go("\n"),
+  go("\n  \n"),
   go("[title]"),
+  go("[title]\nkey=value"),
+  go("[title]\nkey=value [value]"),
+  go("[title]\nkey=value ;value "),
+  go("[title]\nkey=value ;value [value]"),
+  go("[title]\nkey=value ;value [value]\n"
+     "[second]  \nkey2=value2"),
   ok.
 
 go(String) ->
