@@ -15,17 +15,29 @@
 %% specific language governing permissions and limitations
 %% under the License.
 
-Nonterminals sections section properties property single_value values.
+Nonterminals
+  sections section
+  title
+  properties property
+  values single_value.
 
-Terminals '[' ']' '=' blank quoted word comment break.
+Terminals
+  '[' ']' '='
+  blank
+  word quoted
+  comment break.
 
 Rootsymbol sections.
+
+%% Empty file                                                
 
 sections -> '$empty' : [].
 sections -> section sections : ['$1' | '$2'].
 
 %% section -> '[' word ']' break properties : {'$3', '$6'}.
-section -> '[' word ']' break properties : {'$2', '$5'}.
+section -> title break properties : {'$1', '$3'}.
+
+title -> '[' word ']'.
 
 properties -> property : ['$1'].
 properties -> property properties : ['$1' | '$2'].
