@@ -21,9 +21,6 @@ Nonterminals
   sections section
   title_part
   title
-%%   skip_lines
-%%   blank_line
-%%   comment_line
   properties property
   values single_value.
 
@@ -35,9 +32,10 @@ Terminals
   comment
   break.
 
+%% TODO(shino): extract string by value_of and flatten (if needed)
+
 Rootsymbol sections.
 
-%% Empty file                                                
 sections -> end_of_file : [].
 sections -> break end_of_file : [].
 sections -> section : ['$1'].
@@ -47,20 +45,10 @@ section -> title_part properties : {'$1', '$2'}.
 
 title_part -> title break : '$1'.
 title_part -> break title break : '$2'.
-%% title_part -> title blank break : '$1'.
-%% title_part -> skip_lines title break : '$2'.
-%% title_part -> skip_lines title blank break : '$2'.
 
+%% TODO(shino): add option as "quited"
 title -> '[' word ']' : '$2'.
 title -> '[' word ']' blank : '$2'.
-
-%% skip_lines -> blank_line skip_lines.
-%% skip_lines -> comment_line skip_lines.
-
-%% blank_line -> break.  
-%% blank_line -> blank break.  
-
-%% comment_line -> comment break.
 
 properties -> end_of_file : [].
 properties -> property : ['$1'].
