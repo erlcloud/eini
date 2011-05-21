@@ -21,11 +21,12 @@ empty_test_() ->
     ?_assertEqual({ok, []}, parse_string("\n"))
    ]}.
 
-one_section_test_() ->
+one_section_title_only_test_() ->
   {setup,
    fun setup/0,
    fun teardown/1,
    [
+    %% Title only
     ?_assertEqual({ok, [
                         {{"title", default},
                          []}
@@ -33,6 +34,63 @@ one_section_test_() ->
                   parse_string(
                     "[title]\n"
                    )),
+    %% Title only, but trailing spaces
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                   )),
+    %% Title only, but preceding blank lines
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "\n"
+                    "  \n"
+                    "[title]\n"
+                   )),
+    %% Title only, but preceding blank lines and trailing spaces
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "\n"
+                    "  \n"
+                    "[title]\t\s\n"
+                   )),
+    %% Title only, but trailing blank lines
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "[title]\n"
+                    "\n"
+                    "  \n"
+                    "\n"
+                   )),
+    %% Title only, but trailing spaces and trailing blank lines
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "\n"
+                    "\n"
+                   ))
+   ]}.
+
+one_section_title_and_one_prop_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    %% Simple case
     ?_assertEqual({ok, [
                         {{"title", default},
                          [{"key1", "value1"}]}
@@ -41,6 +99,7 @@ one_section_test_() ->
                     "[title]\n"
                     "key1=value1\n"
                    )),
+    %% title has trailing spaces
     ?_assertEqual({ok, [
                         {{"title", default},
                          [{"key1", "value1"}]}
@@ -48,6 +107,127 @@ one_section_test_() ->
                   parse_string(
                     "[title]  \n"
                     "key1=value1\n"
+                   )),
+    %% Single blank line between title and a prop
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "\n"
+                    "key1=value1\n"
+                   )),
+    %% Multi blank lines between title and a prop
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "\n"
+                    "    \n"
+                    "\n"
+                    "key1=value1\n"
+                   )),
+    %% Multi blank lines after a prop
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1=value1\n"
+                    "\n"
+                    "    \n"
+                    "\n"
+                   )),
+    %% Multi blank lines between title and a prop and
+    %% multi blank lines after a prop
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "\n"
+                    "    \n"
+                    "\n"
+                    "key1=value1\n"
+                    "\n"
+                    "    \n"
+                    "\n"
+                   )),
+
+    %% value has [ char
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "va[lue1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1=va[lue1\n"
+                   )),
+    %% value has ] char
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "valu]e1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1=valu]e1\n"
+                   )),
+    %% value has [ and ] chars
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "va[lu]e1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1=va[lu]e1\n"
+                   )),
+    %% value has ; char
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1;continue"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1=value1;continue\n"
+                   ))
+   ]}.
+
+one_section_title_and_two_props_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    %% Simple case
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"},
+                          {"key2", "value2"}]}
+                       ]},
+                  parse_string(
+                    "[title]\n"
+                    "key1=value1\n"
+                    "key2=value2\n"
+                   )),
+    %% Blank lines
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"},
+                          {"key2", "value2"}]}
+                       ]},
+                  parse_string(
+                    "[title]\n"
+                    "\n"
+                    "key1=value1\n"
+                    "  \n"
+                    "\n"
+                    "key2=value2\n"
+                    "\n"
+                    "\n"
                    ))
    ]}.
 
