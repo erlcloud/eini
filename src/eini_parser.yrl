@@ -48,29 +48,29 @@ title_part -> title break : '$1'.
 title_part -> break title break : '$2'.
 
 %% TODO(shino): add option as "quited"
-title -> '[' word ']' : '$2'.
-title -> '[' word ']' blank : '$2'.
+title -> '[' word ']' : value_of('$2').
+title -> '[' word ']' blank : value_of('$2').
 
 properties -> end_of_file : [].
 properties -> property : ['$1'].
 properties -> property properties : ['$1' | '$2'].
 
-property -> word '=' values break : {'$1', '$3'}.
+property -> word '=' values break : {value_of('$1'), lists:flatten('$3')}.
 
 values -> single_value : ['$1'].
 values -> single_value values : ['$1' | '$2'].
 
-single_value ->  word    : '$1'.
-single_value ->  value   : '$1'.
-single_value ->  blank   : '$1'.
-single_value ->  comment : '$1'.
-single_value -> '[' : "[".
-single_value -> '=' : "=".
-single_value -> ']' : "]".
+single_value ->  word    : value_of('$1'). 
+single_value ->  value   : value_of('$1').
+single_value ->  blank   : value_of('$1').
+single_value ->  comment : value_of('$1').
+single_value -> '['      : "[".
+single_value -> '='      : "=".
+single_value -> ']'      : "]".
 
 
 Erlang code.
 
-%% -compile({inline, value_of/1}).
-%% value_of(Token) ->
-%%     element(3, Token).
+-compile({inline, value_of/1}).
+value_of(Token) ->
+    element(3, Token).
