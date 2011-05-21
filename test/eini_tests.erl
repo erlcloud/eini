@@ -42,6 +42,37 @@ one_section_title_only_test_() ->
                   parse_string(
                     "[title]  \n"
                    )),
+    %% Title only, but comment lines
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "; comment line"
+                    "  \n"
+                    "[title]\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "; comment line"
+                    "; comment line 2"
+                    "  \n"
+                    "[title]\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "; comment line"
+                    "; comment line 2"
+                    "  \n"
+                    "[title]\n"
+                    "; comment after section title"
+                   )),
     %% Title only, but preceding blank lines
     ?_assertEqual({ok, [
                         {{"title", default},
