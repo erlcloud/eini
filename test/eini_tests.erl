@@ -21,17 +21,62 @@ empty_test_() ->
     ?_assertEqual({ok, []}, parse_string("\n"))
    ]}.
 
-empty_one_title_test_() ->
+one_section_test_() ->
   {setup,
    fun setup/0,
    fun teardown/1,
    [
-    ?_assertEqual({ok, [{{"title", default}, []}]},
-                  parse_string("[title]\n")),
-    ?_assertEqual({ok, [{{"title", default}, [{"key1", "value1"}]}]},
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "[title]\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
                   parse_string(
                     "[title]\n"
                     "key1=value1\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1=value1\n"
+                   ))
+   ]}.
+
+two_section_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    ?_assertEqual({ok, [
+                        {{"titleA", default},
+                         []},
+                        {{"titleB", default},
+                         []}
+                       ]},
+                  parse_string(
+                    "[titleA]\n"
+                    "[titleB]\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {{"titleA", default},
+                         [{"keyA1", "valueA1"}]},
+                        {{"titleB", default},
+                         [{"keyB1", "valueB1"}]}
+                       ]},
+                  parse_string(
+                    "[titleA]\n"
+                    "keyA1=valueA1\n"
+                    "[titleB]  \n"
+                    "keyB1=valueB1\n"
                    ))
    ]}.
 

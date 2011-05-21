@@ -41,10 +41,7 @@ section -> title_part properties : {'$1', '$2'}.
 
 title_part -> title break             : '$1'.
 title_part -> title blank break       : '$1'.
-title_part -> break title break       : '$2'.
-title_part -> break title blank break : '$2'.
 
-%% TODO(shino): add option as "quited"
 title -> '[' word ']'              : {value_of('$2'), default}.
 title -> '[' word blank quoted ']' : {value_of('$2'), value_of('$4')}.
 
@@ -56,6 +53,7 @@ property -> word '=' values break : {value_of('$1'), lists:flatten('$3')}.
 values -> single_value : ['$1'].
 values -> single_value values : ['$1' | '$2'].
 
+%% At value position, any characters are accepted AS IS.
 single_value ->  word    : value_of('$1'). 
 single_value ->  value   : value_of('$1').
 single_value ->  blank   : value_of('$1').
