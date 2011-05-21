@@ -26,7 +26,12 @@ empty_one_title_test_() ->
    fun setup/0,
    fun teardown/1,
    [
-    ?_assertEqual({ok, ["title", []]}, parse_string("[title]\n"))
+    ?_assertEqual({ok, [{"title", []}]}, parse_string("[title]\n")),
+    ?_assertEqual({ok, [{"title", [{"key1", "value1"}]}]},
+                  parse_string(
+                    "[title]\n"
+                    "key1=value1\n"
+                   ))
    ]}.
 
 syntax_error_title_test() ->
