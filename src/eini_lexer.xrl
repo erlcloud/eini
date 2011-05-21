@@ -33,7 +33,7 @@ Rules.
 {B}{S}*{B}       : {skip_token, "\n"}.
 
 %% mark line break by token 'break' in order to use as delimiters
-{B}              : {token, {break,   TokenLine, TokenChars}}.
+{B}              : {token, {break,   TokenLine}}.
 
 %% Just chars
 =                : {token, {'=',     TokenLine}}.

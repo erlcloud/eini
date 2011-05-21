@@ -17,7 +17,7 @@
 
 -module(eini).
 
--author("shino@accense.com").
+-author('shino@accense.com').
 
 -export([parse_string/1, parse_file/1]).
 %% for debug use
@@ -44,9 +44,10 @@ lex(String) when is_binary(String) ->
 lex(String) when is_list(String) ->
   %% Add a line break for files which does not end by a blank line.
   case eini_lexer:string(String ++ "\n") of
-    {ok, Tokens, EndLine} ->
-      %% Add a EOL token
-      {ok, Tokens ++ [{end_of_file, EndLine}]};
+    {ok, [{break, _Line}|RestTokens], _EndLine} ->
+      {ok, RestTokens};
+    {ok, Tokens, _EndLine} ->
+      {ok, Tokens};
     ErrorInfo ->
       {error, ErrorInfo}
   end.
