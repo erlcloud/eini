@@ -54,7 +54,6 @@ title -> '[' word blank quoted ']'       : {value_of('$2'), value_of('$4')}.
 title -> '[' word blank quoted ']' blank : {value_of('$2'), value_of('$4')}.
 
 properties -> end_of_file : [].
-properties -> property : ['$1'].
 properties -> property properties : ['$1' | '$2'].
 
 property -> word '=' values break : {value_of('$1'), lists:flatten('$3')}.
