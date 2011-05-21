@@ -48,7 +48,7 @@ one_section_title_only_test_() ->
                          []}
                        ]},
                   parse_string(
-                    "; comment line"
+                    "; comment line\n"
                     "  \n"
                     "[title]\n"
                    )),
@@ -57,8 +57,8 @@ one_section_title_only_test_() ->
                          []}
                        ]},
                   parse_string(
-                    "; comment line"
-                    "; comment line 2"
+                    "; comment line\n"
+                    "; comment line 2\n"
                     "  \n"
                     "[title]\n"
                    )),
@@ -67,8 +67,8 @@ one_section_title_only_test_() ->
                          []}
                        ]},
                   parse_string(
-                    "; comment line"
-                    "; comment line 2"
+                    "; comment line\n"
+                    "; comment line 2\n"
                     "  \n"
                     "[title]\n"
                     "; comment after section title"
@@ -116,6 +116,18 @@ one_section_title_only_test_() ->
                    ))
    ]}.
 
+one_section_title_only_syntax_error_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    %% No ] char
+    ?_assertMatch({error, {1, _Reason}},
+                  parse_string(
+                    "[title\n"
+                   ))
+   ]}.
+
 one_section_title_and_one_prop_test_() ->
   {setup,
    fun setup/0,
@@ -148,6 +160,26 @@ one_section_title_and_one_prop_test_() ->
                     "[title]  \n"
                     "\n"
                     "key1=value1\n"
+                   )),
+    %% Single comment line between title and a prop
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "; comment\n"
+                    "key1=value1\n"
+                   )),
+    %% Single comment line after a prop
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1=value1\n"
+                    "; comment\n"
                    )),
     %% Multi blank lines between title and a prop
     ?_assertEqual({ok, [
