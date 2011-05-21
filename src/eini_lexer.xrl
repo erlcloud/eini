@@ -19,7 +19,8 @@
 
 Definitions.
 
-A = [a-z][a-zA-Z0-9_\.]*
+K = [a-z][a-zA-Z0-9_\.]*
+V = [a-z][a-zA-Z0-9_\.]*
 S = [\s\t]
 B = [\n\r]
 
@@ -41,8 +42,9 @@ Rules.
 
 %% word-like tokens
 {S}+             : {token, {blank,   TokenLine, TokenChars}}.
-"{A}"           : {token, {quoted,  TokenLine, TokenChars}}.
-{A}             : {token, {word,    TokenLine, TokenChars}}.
+"{K}"            : {token, {quoted,  TokenLine, TokenChars}}.
+{K}              : {token, {word,    TokenLine, TokenChars}}.
+{V}              : {token, {value,   TokenLine, TokenChars}}.
 
 %% comment-like token, but may be a part of value depending on the location
 ;.*              : {token, {comment, TokenLine, TokenChars}}.

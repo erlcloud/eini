@@ -29,6 +29,7 @@ Terminals
   end_of_file
   blank
   word quoted
+  value
   comment
   break.
 
@@ -59,8 +60,9 @@ property -> word '=' values break : {'$1', '$3'}.
 values -> single_value : ['$1'].
 values -> single_value values : ['$1' | '$2'].
 
-single_value ->  word : '$1'.
-single_value ->  blank : '$1'.
+single_value ->  word    : '$1'.
+single_value ->  value   : '$1'.
+single_value ->  blank   : '$1'.
 single_value ->  comment : '$1'.
 single_value -> '[' : "[".
 single_value -> '=' : "=".
