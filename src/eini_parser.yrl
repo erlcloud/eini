@@ -21,9 +21,11 @@ Nonterminals
   sections section
   title_part
   title
+  property_with_skip_lines
   properties property
   values single_value
-  comment_lines comment_line.
+  skip_lines
+  comment_line.
 
 Terminals
   '[' ']' '='
@@ -39,7 +41,7 @@ sections -> '$empty' : [].
 sections -> section sections : ['$1' | '$2'].
 
 section -> title_part properties : {'$1', '$2'}.
-section -> comment_lines title_part properties : {'$2', '$3'}.
+section -> skip_lines title_part properties : {'$2', '$3'}.
 
 title_part -> title break             : '$1'.
 title_part -> title blank break       : '$1'.
@@ -48,7 +50,10 @@ title -> '[' word ']'              : {value_of('$2'), default}.
 title -> '[' word blank quoted ']' : {value_of('$2'), value_of('$4')}.
 
 properties -> '$empty' : [].
-properties -> property properties : ['$1' | '$2'].
+properties -> property_with_skip_lines properties : ['$1' | '$2'].
+
+property_with_skip_lines -> property : '$1'.
+property_with_skip_lines -> skip_lines property : '$1'.
 
 property -> word '=' values break : {value_of('$1'), lists:flatten('$3')}.
 
@@ -65,8 +70,8 @@ single_value -> '='      : "=".
 single_value -> ']'      : "]".
 
 %% ONLY a comment line at the beggining of file is NOT skipped by leex
-comment_lines -> comment_line : ['$1'].
-comment_lines -> comment_line comment_lines : ['$1', '$2'].
+skip_lines -> comment_line : ['$1'].
+skip_lines -> comment_line skip_lines : ['$1', '$2'].
 
 comment_line -> comment break : '$1'.
 

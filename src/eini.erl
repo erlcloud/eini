@@ -42,9 +42,20 @@ parse_file(Filename) ->
 lex(String) when is_binary(String) ->
   lex(binary_to_list(String));
 lex(String) when is_list(String) ->
-  %% Insert line breaks
-  %% Tail: For files which does not end by a blank line.
-  case eini_lexer:string(String ++ "\n") of
+  %% Add \n char at the end if does NOT end by \n
+  %% TOD(shino): more simple logic?
+  String2 = case String of
+              "" ->
+                "\n";
+              _NotEmpty ->
+                case lists:last(String) of
+                  $\n ->
+                    String;
+                  _ ->
+                    String ++ "\n"
+                end
+            end,
+  case eini_lexer:string(String2) of
     {ok, [{break, _Line}|RestTokens], _EndLine} ->
       {ok, RestTokens};
     {ok, Tokens, _EndLine} ->
