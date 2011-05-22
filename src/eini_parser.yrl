@@ -22,7 +22,8 @@ Nonterminals
   title_part
   title
   properties property
-  values single_value.
+  values single_value
+  comment_lines comment_line.
 
 Terminals
   '[' ']' '='
@@ -38,6 +39,7 @@ sections -> '$empty' : [].
 sections -> section sections : ['$1' | '$2'].
 
 section -> title_part properties : {'$1', '$2'}.
+section -> comment_lines title_part properties : {'$2', '$3'}.
 
 title_part -> title break             : '$1'.
 title_part -> title blank break       : '$1'.
@@ -61,6 +63,12 @@ single_value ->  comment : value_of('$1').
 single_value -> '['      : "[".
 single_value -> '='      : "=".
 single_value -> ']'      : "]".
+
+%% ONLY a comment line at the beggining of file is NOT skipped by leex
+comment_lines -> comment_line : ['$1'].
+comment_lines -> comment_line comment_lines : ['$1', '$2'].
+
+comment_line -> comment break : '$1'.
 
 
 Erlang code.

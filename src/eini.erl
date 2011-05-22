@@ -43,11 +43,8 @@ lex(String) when is_binary(String) ->
   lex(binary_to_list(String));
 lex(String) when is_list(String) ->
   %% Insert line breaks
-  %% Head: line comment are distinguished by ";" just after a line break char
   %% Tail: For files which does not end by a blank line.
-  %% TODO(shino): Insertion at Head may be avoided by improving lexer rules.
-  %% TODO(shino): By this insertion, line numbers in error report (in parse_tokens/1) go wrong.
-  case eini_lexer:string("\n" ++ String ++ "\n") of
+  case eini_lexer:string(String ++ "\n") of
     {ok, [{break, _Line}|RestTokens], _EndLine} ->
       {ok, RestTokens};
     {ok, Tokens, _EndLine} ->
