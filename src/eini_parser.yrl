@@ -18,6 +18,7 @@
 %% @author: shino@accense.com
 
 Nonterminals
+  whole
   sections section
   title_part
   title
@@ -35,16 +36,21 @@ Terminals
   comment
   break.
 
-Rootsymbol sections.
+Rootsymbol whole.
+
+whole -> sections : '$1'.
+whole -> skip_lines sections : '$2'.
+%% whole -> sections skip_lines: '$1'.
 
 sections -> '$empty' : [].
 sections -> section sections : ['$1' | '$2'].
 
 section -> title_part properties : {'$1', '$2'}.
-section -> skip_lines title_part properties : {'$2', '$3'}.
 
-title_part -> title break             : '$1'.
-title_part -> title blank break       : '$1'.
+title_part -> title break                  : '$1'.
+title_part -> title blank break            : '$1'.
+title_part -> title break skip_lines       : '$1'.
+title_part -> title blank break skip_lines : '$1'.
 
 title -> '[' word ']'              : {value_of('$2'), default}.
 title -> '[' word blank quoted ']' : {value_of('$2'), value_of('$4')}.
@@ -53,7 +59,7 @@ properties -> '$empty' : [].
 properties -> property_with_skip_lines properties : ['$1' | '$2'].
 
 property_with_skip_lines -> property : '$1'.
-property_with_skip_lines -> skip_lines property : '$1'.
+property_with_skip_lines -> property skip_lines : '$1'.
 
 property -> word '=' values break : {value_of('$1'), lists:flatten('$3')}.
 

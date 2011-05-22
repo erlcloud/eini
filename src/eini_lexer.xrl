@@ -27,7 +27,7 @@ B = [\n\r]
 Rules.
 
 %% skip comment line,which has ; at the beginning of line
-{B};.*{B}        : {skip_token, "\n"}.
+%% {B};.*{B}        : {skip_token, "\n"}.
 
 %% skip empty lines or lines with space/tab chars
 {B}{S}*{B}       : {skip_token, "\n"}.
