@@ -24,6 +24,7 @@ Nonterminals
   title
   property_with_skip_lines
   properties property
+  key_part
   values single_value
   skip_lines
   comment_line.
@@ -61,7 +62,12 @@ properties -> property_with_skip_lines properties : ['$1' | '$2'].
 property_with_skip_lines -> property : '$1'.
 property_with_skip_lines -> property skip_lines : '$1'.
 
-property -> word '=' values break : {value_of('$1'), lists:flatten('$3')}.
+property -> key_part '=' values break : {value_of('$1'), strip_values('$3')}.
+
+key_part -> word : '$1'.
+key_part -> word blank : '$1'.
+key_part -> blank word : '$2'.
+key_part -> blank word blank : '$2'.
 
 values -> single_value : ['$1'].
 values -> single_value values : ['$1' | '$2'].
@@ -86,4 +92,8 @@ Erlang code.
 
 -compile({inline, value_of/1}).
 value_of(Token) ->
-    element(3, Token).
+  element(3, Token).
+
+-compile({inline, strip_values/1}).
+strip_values(Values) ->
+  string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t).
