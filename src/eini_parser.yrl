@@ -90,10 +90,8 @@ comment_line -> comment break : '$1'.
 
 Erlang code.
 
--compile({inline, value_of/1}).
 value_of(Token) ->
   element(3, Token).
 
--compile({inline, strip_values/1}).
 strip_values(Values) ->
   string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t).
