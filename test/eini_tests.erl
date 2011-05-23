@@ -257,6 +257,33 @@ one_section_title_and_one_prop_test_() ->
                   parse_string(
                     "[title]  \n"
                     "key1=value1;continue\n"
+                   )),
+    %% key has trailing spaces
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1   =value1\n"
+                   )),
+    %% value has preceding and trailing spaces
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1"}]}
+                       ]},
+                  parse_string(
+                    "[title]  \n"
+                    "key1=  value1  \n"
+                   )),
+    %% value has characters which can not used in titles or keys
+    ?_assertEqual({ok, [
+                        {{"title", default},
+                         [{"key1", "value1$% '""#!+*=@/:+"}]}
+                       ]},
+                  parse_string(
+                    "[title]\n"
+                    "key1=value1$% '""#!+*=@/:+\n"
                    ))
    ]}.
 
