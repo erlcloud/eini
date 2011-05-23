@@ -23,6 +23,13 @@
 %% for debug use
 -export([lex/1, parse_tokens/1]).
 
+%% Result form:
+%% [
+%%  {"title1", {"subtitle1", KVs}},
+%%  {"title1", {"subbitle2", KVs}},
+%%  {"title2", {default,     KVs}}
+%% ].
+%% KVs are proplists of keys and values
 parse_string(String) when is_binary(String) ->
   parse_string(binary_to_list(String));
 parse_string(String) when is_list(String) ->

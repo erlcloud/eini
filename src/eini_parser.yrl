@@ -46,7 +46,8 @@ whole -> skip_lines sections : '$2'.
 sections -> '$empty' : [].
 sections -> section sections : ['$1' | '$2'].
 
-section -> title_part properties : {'$1', '$2'}.
+section -> title_part properties :
+             {title('$1'), {subtitle('$1'), '$2'}}.
 
 title_part -> title break                  : '$1'.
 title_part -> title blank break            : '$1'.
@@ -92,6 +93,11 @@ Erlang code.
 
 value_of(Token) ->
   element(3, Token).
+
+title({Title, _Subtitle}) ->
+  Title.
+subtitle({_Title, Subtitle}) ->
+  Subtitle.
 
 strip_values(Values) ->
   string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t).
