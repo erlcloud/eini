@@ -20,7 +20,7 @@
 Definitions.
 
 K = [a-z][a-zA-Z0-9_\.]*
-V = [a-z][a-zA-Z0-9_\.]*
+V = [^=\[\]\s\t\n\r]+
 S = [\s\t]
 B = [\n\r]
 
