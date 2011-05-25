@@ -30,3 +30,6 @@ Example::
                 {name,"Yellow Squash"},
                 {weight,0.3},
                 {amount,3}]}]}
+
+
+Copyright by Accense Technology, Inc.
