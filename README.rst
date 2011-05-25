@@ -21,7 +21,7 @@ Result form::
   [
    {"title1", [{"subtitle1", KVs}},
                {"subbitle2", KVs}}],
-   {"title2", {default,     KVs}}
+   {"title2", [{default,     KVs}]}
   ].
 
 
