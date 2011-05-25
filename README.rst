@@ -11,6 +11,7 @@ Input file::
 
   [title1 "subtitle1"]
   key = value
+  key2 = value2
   [title1 "subtitle2"]
   key = value
   [title2]
@@ -19,9 +20,13 @@ Input file::
 Result form::
 
   [
-   {"title1", [{"subtitle1", KVs}},
-               {"subbitle2", KVs}}],
-   {"title2", [{default,     KVs}]}
+   {"title1", [{"subtitle1",
+                [{"key", "value"},
+                 {"key2", "value2"}]
+               },
+               {"subbitle2", [{"key", "value"}]}
+              ]},
+   {"title2", [{default, [{"key", "value"}]}]}
   ].
 
 
