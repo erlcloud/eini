@@ -29,7 +29,7 @@ one_section_title_only_test_() ->
     %% Title only
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "[title]\n"
@@ -37,7 +37,7 @@ one_section_title_only_test_() ->
     %% Title only, but trailing spaces
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -45,7 +45,7 @@ one_section_title_only_test_() ->
     %% Title only, but comment lines
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "; comment line\n"
@@ -54,7 +54,7 @@ one_section_title_only_test_() ->
                    )),
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "; comment line\n"
@@ -64,7 +64,7 @@ one_section_title_only_test_() ->
                    )),
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "; comment line\n"
@@ -76,7 +76,7 @@ one_section_title_only_test_() ->
     %% Title only, but preceding blank lines
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "\n"
@@ -85,7 +85,7 @@ one_section_title_only_test_() ->
                    )),
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "  \n"
@@ -95,7 +95,7 @@ one_section_title_only_test_() ->
     %% Title only, but preceding blank lines and trailing spaces
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "\n"
@@ -105,7 +105,7 @@ one_section_title_only_test_() ->
     %% Title only, but trailing blank lines
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "[title]\n"
@@ -116,7 +116,7 @@ one_section_title_only_test_() ->
     %% Title only, but trailing spaces and trailing blank lines
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, []}}
+                         [{default, []}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -145,7 +145,7 @@ one_section_title_and_one_prop_test_() ->
     %% Simple case
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]\n"
@@ -154,7 +154,7 @@ one_section_title_and_one_prop_test_() ->
     %% title has trailing spaces
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -163,7 +163,7 @@ one_section_title_and_one_prop_test_() ->
     %% Single blank line between title and a prop
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -173,7 +173,7 @@ one_section_title_and_one_prop_test_() ->
     %% Single comment line between title and a prop
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -183,7 +183,7 @@ one_section_title_and_one_prop_test_() ->
     %% Single comment line after a prop
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -193,7 +193,7 @@ one_section_title_and_one_prop_test_() ->
     %% Multi blank lines between title and a prop
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -205,7 +205,7 @@ one_section_title_and_one_prop_test_() ->
     %% Multi blank lines after a prop
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -218,7 +218,7 @@ one_section_title_and_one_prop_test_() ->
     %% multi blank lines after a prop
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -234,7 +234,7 @@ one_section_title_and_one_prop_test_() ->
     %% value has [ char
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "va[lue1"}]}}
+                         [{default, [{"key1", "va[lue1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -243,7 +243,7 @@ one_section_title_and_one_prop_test_() ->
     %% value has ] char
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "valu]e1"}]}}
+                         [{default, [{"key1", "valu]e1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -252,7 +252,7 @@ one_section_title_and_one_prop_test_() ->
     %% value has [ and ] chars
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "va[lu]e1"}]}}
+                         [{default, [{"key1", "va[lu]e1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -261,7 +261,7 @@ one_section_title_and_one_prop_test_() ->
     %% value has ; char
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1;continue"}]}}
+                         [{default, [{"key1", "value1;continue"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -270,7 +270,7 @@ one_section_title_and_one_prop_test_() ->
     %% key has trailing spaces
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -279,7 +279,7 @@ one_section_title_and_one_prop_test_() ->
     %% value has preceding and trailing spaces
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1"}]}}
+                         [{default, [{"key1", "value1"}]}]}
                        ]},
                   parse_string(
                     "[title]  \n"
@@ -288,7 +288,7 @@ one_section_title_and_one_prop_test_() ->
     %% value has characters which can not used in titles or keys
     ?_assertEqual({ok, [
                         {"title", 
-                         {default, [{"key1", "value1$% '""#!+*=@/:+"}]}}
+                         [{default, [{"key1", "value1$% '""#!+*=@/:+"}]}]}
                        ]},
                   parse_string(
                     "[title]\n"
@@ -304,9 +304,9 @@ one_section_title_and_two_props_test_() ->
     %% Simple case
     ?_assertEqual({ok, [
                         {"title",
-                         {default,
-                          [{"key1", "value1"},
-                           {"key2", "value2"}]}}
+                         [{default,
+                           [{"key1", "value1"},
+                            {"key2", "value2"}]}]}
                        ]},
                   parse_string(
                     "[title]\n"
@@ -316,9 +316,9 @@ one_section_title_and_two_props_test_() ->
     %% Blank lines
     ?_assertEqual({ok, [
                         {"title",
-                         {default,
-                          [{"key1", "value1"},
-                           {"key2", "value2"}]}}
+                         [{default,
+                           [{"key1", "value1"},
+                            {"key2", "value2"}]}]}
                        ]},
                   parse_string(
                     "[title]\n"
@@ -338,18 +338,20 @@ two_section_test_() ->
    fun teardown/1,
    [
     ?_assertEqual({ok, [
-                        {"titleA", {default, []}},
-                        {"titleB", {default, []}}
+                        {"titleA", [{default, []}]},
+                        {"titleB", [{default, []}]}
                        ]},
                   parse_string(
                     "[titleA]\n"
                     "[titleB]\n"
                    )),
     ?_assertEqual({ok, [
-                        {"titleA", {default,
-                         [{"keyA1", "valueA1"}]}},
-                        {"titleB", {default,
-                         [{"keyB1", "valueB1"}]}}
+                        {"titleA",
+                         [{default,
+                           [{"keyA1", "valueA1"}]}]},
+                        {"titleB",
+                         [{default,
+                           [{"keyB1", "valueB1"}]}]}
                        ]},
                   parse_string(
                     "[titleA]\n"

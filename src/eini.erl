@@ -23,19 +23,40 @@
 %% for debug use
 -export([lex/1, parse_tokens/1]).
 
+%% TODO(shino): Add spec's
+
+%% Input:
+%%
+%% [title1 "subtitle1"]
+%% key = value
+%% [title1 "subtitle2"]
+%% key = value
+%% [title2]
+%% key = value
+%%
 %% Result form:
+%%
 %% [
-%%  {"title1", {"subtitle1", KVs}},
-%%  {"title1", {"subbitle2", KVs}},
+%%  {"title1", [{"subtitle1", KVs}},
+%%              {"subbitle2", KVs}}],
 %%  {"title2", {default,     KVs}}
 %% ].
+%%
 %% KVs are proplists of keys and values
 parse_string(String) when is_binary(String) ->
   parse_string(binary_to_list(String));
 parse_string(String) when is_list(String) ->
   case lex(String) of
     {ok, Tokens} ->
-      parse_tokens(Tokens);
+      parse_and_collect(Tokens);
+    {error, Reason} ->
+      {error, Reason}
+  end.
+
+parse_and_collect(Tokens) ->
+  case parse_tokens(Tokens) of
+    {ok, Parsed} ->
+      collect_subsection(proplists:get_keys(Parsed), Parsed, []);
     {error, Reason} ->
       {error, Reason}
   end.
@@ -78,3 +99,10 @@ parse_tokens(Tokens) ->
     {error, {Line, Mod, Reason}} ->
       {error, {Line, Mod:format_error(Reason)}}
   end.
+
+collect_subsection([], _Parsed, Res) ->
+  {ok, Res};
+collect_subsection([Key|Keys], Parsed, Res) ->
+  Subsections = proplists:get_all_values(Key, Parsed),
+  collect_subsection(Keys, Parsed, [{Key, Subsections} | Res]).
+    
