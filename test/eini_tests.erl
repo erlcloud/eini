@@ -83,6 +83,15 @@ one_section_title_only_test_() ->
                     "  \n"
                     "[title]\n"
                    )),
+    ?_assertEqual({ok, [
+                        {"title", 
+                         {default, []}}
+                       ]},
+                  parse_string(
+                    "  \n"
+                    "\n"
+                    "[title]\n"
+                   )),
     %% Title only, but preceding blank lines and trailing spaces
     ?_assertEqual({ok, [
                         {"title", 

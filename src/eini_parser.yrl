@@ -27,7 +27,8 @@ Nonterminals
   key_part
   values single_value
   skip_lines
-  comment_line.
+  comment_line
+  blank_line.
 
 Terminals
   '[' ']' '='
@@ -41,7 +42,8 @@ Rootsymbol whole.
 
 whole -> sections : '$1'.
 whole -> skip_lines sections : '$2'.
-%% whole -> sections skip_lines: '$1'.
+whole -> blank_line sections : '$2'.
+whole -> blank_line skip_lines sections : '$3'.
 
 sections -> '$empty' : [].
 sections -> section sections : ['$1' | '$2'].
@@ -87,6 +89,8 @@ skip_lines -> comment_line : ['$1'].
 skip_lines -> comment_line skip_lines : ['$1', '$2'].
 
 comment_line -> comment break : '$1'.
+
+blank_line -> blank break : '$1'.
 
 
 Erlang code.
