@@ -3,3 +3,5 @@
 src/eini_parser.erl
 src/eini_lexer.erl
 ebin/*.app
+.eunit
+deps
