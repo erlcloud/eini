@@ -33,7 +33,7 @@ Nonterminals
 Terminals
   '[' ']' '='
   blank
-  word quoted
+  word
   value
   comment
   break.
@@ -48,16 +48,14 @@ whole -> blank_line skip_lines sections : '$3'.
 sections -> '$empty' : [].
 sections -> section sections : ['$1' | '$2'].
 
-section -> title_part properties :
-             {title('$1'), {subtitle('$1'), '$2'}}.
+section -> title_part properties : {'$1', '$2'}.
 
 title_part -> title break                  : '$1'.
 title_part -> title blank break            : '$1'.
 title_part -> title break skip_lines       : '$1'.
 title_part -> title blank break skip_lines : '$1'.
 
-title -> '[' word ']'              : {value_of('$2'), default}.
-title -> '[' word blank quoted ']' : {value_of('$2'), value_of('$4')}.
+title -> '[' word ']'              : value_of('$2').
 
 properties -> '$empty' : [].
 properties -> property_with_skip_lines properties : ['$1' | '$2'].
@@ -97,11 +95,6 @@ Erlang code.
 
 value_of(Token) ->
   element(3, Token).
-
-title({Title, _Subtitle}) ->
-  Title.
-subtitle({_Title, Subtitle}) ->
-  Subtitle.
 
 strip_values(Values) ->
   string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t).
