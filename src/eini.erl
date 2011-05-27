@@ -27,36 +27,34 @@
 
 %% Input:
 %%
-%% [title1 "subtitle1"]
+%% [title1]
 %% key = value
-%% [title1 "subtitle2"]
-%% key = value
+%% key2 = value2
 %% [title2]
 %% key = value
 %%
 %% Result form:
 %%
 %% [
-%%  {"title1", [{"subtitle1", KVs}},
-%%              {"subbitle2", KVs}}],
-%%  {"title2", {default,     KVs}}
+%%  {"title1", [{"key", "value"},
+%%              {"key2", "value2"}}],
+%%  {"title2", [{"key", "value"}]}
 %% ].
 %%
-%% KVs are proplists of keys and values
 parse_string(String) when is_binary(String) ->
   parse_string(binary_to_list(String));
 parse_string(String) when is_list(String) ->
   case lex(String) of
     {ok, Tokens} ->
-      parse_and_collect(Tokens);
+      parse_and_validate(Tokens);
     {error, Reason} ->
       {error, Reason}
   end.
 
-parse_and_collect(Tokens) ->
+parse_and_validate(Tokens) ->
   case parse_tokens(Tokens) of
     {ok, Parsed} ->
-      collect_subsection(proplists:get_keys(Parsed), Parsed, []);
+      validate(Parsed);
     {error, Reason} ->
       {error, Reason}
   end.
@@ -100,9 +98,7 @@ parse_tokens(Tokens) ->
       {error, {Line, Mod:format_error(Reason)}}
   end.
 
-collect_subsection([], _Parsed, Res) ->
-  {ok, Res};
-collect_subsection([Key|Keys], Parsed, Res) ->
-  Subsections = proplists:get_all_values(Key, Parsed),
-  collect_subsection(Keys, Parsed, [{Key, Subsections} | Res]).
+validate(Parsed) ->
+  %% TODO(shino): validate duplicated keys
+  {ok, Parsed}.
     

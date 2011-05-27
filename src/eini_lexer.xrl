@@ -19,15 +19,12 @@
 
 Definitions.
 
-K = [a-z][a-zA-Z0-9_\.]*
+K = [a-zA-Z0-9_\.]+
 V = [^=\[\]\s\t\n\r]+
 S = [\s\t]
 B = [\n\r]
 
 Rules.
-
-%% skip comment line,which has ; at the beginning of line
-%% {B};.*{B}        : {skip_token, "\n"}.
 
 %% skip empty lines or lines with space/tab chars
 {B}{S}*{B}       : {skip_token, "\n"}.
@@ -42,7 +39,6 @@ Rules.
 
 %% word-like tokens
 {S}+             : {token, {blank,   TokenLine, TokenChars}}.
-"{K}"            : {token, {quoted,  TokenLine, TokenChars}}.
 {K}              : {token, {word,    TokenLine, TokenChars}}.
 {V}              : {token, {value,   TokenLine, TokenChars}}.
 
