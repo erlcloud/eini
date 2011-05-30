@@ -50,10 +50,10 @@ sections -> section sections : ['$1' | '$2'].
 
 section -> title_part properties : {'$1', '$2'}.
 
-title_part -> title break                  : '$1'.
-title_part -> title blank break            : '$1'.
-title_part -> title break skip_lines       : '$1'.
-title_part -> title blank break skip_lines : '$1'.
+title_part -> title break                  : list_to_binary('$1').
+title_part -> title blank break            : list_to_binary('$1').
+title_part -> title break skip_lines       : list_to_binary('$1').
+title_part -> title blank break skip_lines : list_to_binary('$1').
 
 title -> '[' word ']'              : value_of('$2').
 
@@ -63,7 +63,8 @@ properties -> property_with_skip_lines properties : ['$1' | '$2'].
 property_with_skip_lines -> property : '$1'.
 property_with_skip_lines -> property skip_lines : '$1'.
 
-property -> key_part '=' values break : {value_of('$1'), strip_values('$3')}.
+property -> key_part '=' values break :
+              {list_to_binary(value_of('$1')), strip_values('$3')}.
 
 key_part -> word : '$1'.
 key_part -> word blank : '$1'.
@@ -97,4 +98,4 @@ value_of(Token) ->
   element(3, Token).
 
 strip_values(Values) ->
-  string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t).
+  list_to_binary(string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t)).

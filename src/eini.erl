@@ -36,9 +36,9 @@
 %% Result form:
 %%
 %% [
-%%  {"title1", [{"key", "value"},
-%%              {"key2", "value2"}}],
-%%  {"title2", [{"key", "value"}]}
+%%  {<<"title1">>, [{<<"key">>, <<"value">>},
+%%                  {<<"key2">>, <<"value2">>}}],
+%%  {<<"title2">>, [{<<"key">>, <<"value">>}]}
 %% ].
 %%
 parse_string(String) when is_binary(String) ->
