@@ -333,12 +333,30 @@ two_section_test_() ->
                    ))
    ]}.
 
-syntax_error_title_test() ->
+lex_error_title_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/ 1,
+   [
+    %% セクションタイトルの中に ! 
+    ?_assertMatch({error, {1, ["syntax error before: ", _]}},
+                  parse_string("[ti!tle]")),
+    ?_assertMatch({error, {3, ["syntax error before: ", _]}},
+                  parse_string(
+                    "[titleA]\n"
+                    "keyA1=valueA1\n"
+                    "[tit!leB]  \n"
+                    "keyB1=valueB1\n"
+                   ))
+   ]}.
+  
+syntax_error_title_test_() ->
   {setup,
    fun setup/0,
    fun teardown/1,
    [
     %% セクションタイトルの前に空白
-    ?_assertMatch({error, {_Line, _Module, _Reason}}, parse_string(" [title]"))
+    ?_assertMatch({error, {1, ["syntax error before: ", _]}},
+                  parse_string("  [title]"))
    ]}.
   
