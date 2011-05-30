@@ -119,7 +119,25 @@ parse_tokens(Tokens) ->
                       {ok, sections()}
                     | {error, {duplicate_title, Title::binary()}}
                     | {error, {duplicate_key, Title::binary(), Key::binary()}}.
-validate(Parsed) ->
-  %% TODO(shino): validate duplicated keys
-  {ok, Parsed}.
-    
+validate(Sections) ->
+  validate(Sections, [], []).
+
+validate([], _AccTitles, AccSections) ->
+  {ok, lists:reverse(AccSections)};
+validate([{Title, Properties} = Section | Sections], AccTitles, AccSections) ->
+  case lists:member(Title, AccTitles) of
+    true ->
+      {error, {duplicate_title, Title}};
+    false ->
+      validate(Sections, [Title|AccTitles], [Section|AccSections], Properties, [])
+  end.
+
+validate(Sections, AccTitles, AccSections, [], _AccKeys) ->
+  validate(Sections, AccTitles, AccSections);
+validate(Sections, AccTitles, AccSections, [{Key, _Value}|Properties], AccKeys) ->
+  case lists:member(Key, AccKeys) of
+    true ->
+      {error, {duplicate_key, hd(AccTitles), Key}};
+    false ->
+      validate(Sections, AccTitles, AccSections, Properties, [Key|AccKeys])
+  end.

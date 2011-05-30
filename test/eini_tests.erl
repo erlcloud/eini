@@ -360,3 +360,43 @@ syntax_error_title_test_() ->
                   parse_string("  [title]"))
    ]}.
   
+dup_title_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/ 1,
+   [
+    ?_assertEqual({error, {duplicate_title, <<"titleA">>}},
+                  parse_string(
+                    "[titleA]\n"
+                    "keyA1=valueA1\n"
+                    "[titleA]  \n"
+                    "keyB1=valueB1\n"
+                   ))
+   ]}.
+  
+dup_key_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/ 1,
+   [
+    ?_assertEqual({error, {duplicate_key, <<"titleB">>, <<"key2">>}},
+                  parse_string(
+                    "[titleA]\n"
+                    "key1=value1\n"
+                    "[titleB]  \n"
+                    "key1=value1\n"
+                    "key2=value2\n"
+                    "key3=value3\n"
+                    "key2=value4\n"
+                   )),
+    ?_assertEqual({error, {duplicate_key, <<"titleB">>, <<"key2">>}},
+                  parse_string(
+                    "[titleA]\n"
+                    "key1=value1\n"
+                    "[titleB]  \n"
+                    "key1=value1\n"
+                    "key2=value2\n"
+                    "key3=value3\n"
+                    "key2  =  value4\n"
+                   ))
+   ]}.
