@@ -19,8 +19,16 @@
 
 Definitions.
 
+%% Characters for keys
 K = [a-zA-Z0-9_\.]+
-V = [^=\[\]\s\t\n\r]+
+
+%% Characters for values, printable except =, [ and ]
+%% \x3d : $=
+%% \x5b : $[
+%% \x5d : $]
+V = [\x21-\x3c\x3e-\x5a\x5c\x5e-\x7e]+
+
+%% spaces and breaks
 S = [\s\t]
 B = [\n\r]
 
