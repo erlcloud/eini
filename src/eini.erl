@@ -19,7 +19,7 @@
 
 -author('shino@accense.com').
 
--export([parse_string/1, parse_file/1]).
+-export([parse_string/1]).
 %% for debug use
 -export([lex/1, parse_tokens/1]).
 
@@ -53,8 +53,6 @@
 
 -spec parse_string(string()) -> {ok, sections()}
                               | {error, reason()}.
-parse_string(String) when is_binary(String) ->
-  parse_string(binary_to_list(String));
 parse_string(String) when is_list(String) ->
   case lex(String) of
     {ok, Tokens} ->
@@ -71,16 +69,8 @@ parse_and_validate(Tokens) ->
       {error, Reason}
   end.
 
-parse_file(Filename) ->
-  case file:read_file(Filename) of
-    {ok, Binary} -> parse_string(Binary);
-    Error -> Error
-  end.
-
 -spec lex(string()) -> {ok, list(Token::tuple())}
                      | {error, {illegal_character, Line::integer(), Reason::string()}}.
-lex(String) when is_binary(String) ->
-  lex(binary_to_list(String));
 lex(String) when is_list(String) ->
   %% Add \n char at the end if does NOT end by \n
   %% TOD(shino): more simple logic?
