@@ -41,6 +41,7 @@
 %%  {<<"title2">>, [{<<"key">>, <<"value">>}]}
 %% ].
 %%
+
 parse_string(String) when is_binary(String) ->
   parse_string(binary_to_list(String));
 parse_string(String) when is_list(String) ->
@@ -86,8 +87,8 @@ lex(String) when is_list(String) ->
       {ok, RestTokens};
     {ok, Tokens, _EndLine} ->
       {ok, Tokens};
-    ErrorInfo ->
-      {error, ErrorInfo}
+    {error, {ErrorLine, Mod, Reason}, _EndLine} ->
+      {error, {ErrorLine, Mod:format_error(Reason)}}
   end.
   
 parse_tokens(Tokens) ->
