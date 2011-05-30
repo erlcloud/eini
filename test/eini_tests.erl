@@ -338,14 +338,14 @@ lex_error_title_test_() ->
    fun setup/0,
    fun teardown/ 1,
    [
-    %% セクションタイトルの中に ! 
-    ?_assertMatch({error, {syntax_error, 1, _Reason}},
-                  parse_string("[ti!tle]")),
-    ?_assertMatch({error, {syntax_error, 3, _Reason}},
+    %% セクションタイトルの中に vertical tab
+    ?_assertMatch({error, {illegal_character, 1, _Reason}},
+                  parse_string("[ti\vtle]")),
+    ?_assertMatch({error, {illegal_character, 3, _Reason}},
                   parse_string(
                     "[titleA]\n"
                     "keyA1=valueA1\n"
-                    "[tit!leB]  \n"
+                    "[tit\vleB]  \n"
                     "keyB1=valueB1\n"
                    ))
    ]}.
@@ -357,7 +357,15 @@ syntax_error_title_test_() ->
    [
     %% セクションタイトルの前に空白
     ?_assertMatch({error, {syntax_error, 1, ["syntax error before: ", _]}},
-                  parse_string("  [title]"))
+                  parse_string("  [title]")),
+    %% セクションタイトルの中に空白
+    ?_assertMatch({error, {syntax_error, 3, _Reason}},
+                  parse_string(
+                    "[titleA]\n"
+                    "keyA1=valueA1\n"
+                    "[tit  leB]\n"
+                    "keyB1=valueB1\n"
+                   ))
    ]}.
   
 dup_title_test_() ->
