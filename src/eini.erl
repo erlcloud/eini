@@ -42,6 +42,17 @@
 %% ].
 %%
 
+-type sections() :: [section()].
+-type section() :: {Title::binary(), [property()]}.
+-type property() :: {Key::binary(), Value::binary()}.
+
+-type reason() :: {illegal_character, Line::integer(), Reason::string()}
+                | {syntax_error, Line::integer(), Reason::string()}
+                | {duplicate_title, Title::binary()}
+                | {duplicate_key, Title::binary(), Key::binary()}.
+
+-spec parse_string(string()) -> {ok, sections()}
+                              | {error, reason()}.
 parse_string(String) when is_binary(String) ->
   parse_string(binary_to_list(String));
 parse_string(String) when is_list(String) ->
@@ -66,6 +77,8 @@ parse_file(Filename) ->
     Error -> Error
   end.
 
+-spec lex(string()) -> {ok, list(Token::tuple())}
+                     | {error, {illegal_character, Line::integer(), Reason::string()}}.
 lex(String) when is_binary(String) ->
   lex(binary_to_list(String));
 lex(String) when is_list(String) ->
@@ -88,17 +101,24 @@ lex(String) when is_list(String) ->
     {ok, Tokens, _EndLine} ->
       {ok, Tokens};
     {error, {ErrorLine, Mod, Reason}, _EndLine} ->
-      {error, {ErrorLine, Mod:format_error(Reason)}}
+      {error, {illegal_character, ErrorLine, Mod:format_error(Reason)}}
   end.
   
+-spec parse_tokens(Token::tuple()) ->
+                      {ok, sections()}
+                    | {error, {syntax_error, Line::integer(), Reason::string()}}.
 parse_tokens(Tokens) ->
   case eini_parser:parse(Tokens) of
     {ok, Res} ->
       {ok, Res};
     {error, {Line, Mod, Reason}} ->
-      {error, {Line, Mod:format_error(Reason)}}
+      {error, {syntax_error, Line, Mod:format_error(Reason)}}
   end.
 
+-spec validate(sections()) ->
+                      {ok, sections()}
+                    | {error, {duplicate_title, Title::binary()}}
+                    | {error, {duplicate_key, Title::binary(), Key::binary()}}.
 validate(Parsed) ->
   %% TODO(shino): validate duplicated keys
   {ok, Parsed}.

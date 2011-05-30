@@ -121,7 +121,7 @@ one_section_title_only_syntax_error_test_() ->
    fun teardown/1,
    [
     %% No ] char
-    ?_assertMatch({error, {1, _Reason}},
+    ?_assertMatch({error, {syntax_error, 1, _Reason}},
                   parse_string(
                     "[title\n"
                    ))
@@ -339,9 +339,9 @@ lex_error_title_test_() ->
    fun teardown/ 1,
    [
     %% セクションタイトルの中に ! 
-    ?_assertMatch({error, {1, ["syntax error before: ", _]}},
+    ?_assertMatch({error, {syntax_error, 1, _Reason}},
                   parse_string("[ti!tle]")),
-    ?_assertMatch({error, {3, ["syntax error before: ", _]}},
+    ?_assertMatch({error, {syntax_error, 3, _Reason}},
                   parse_string(
                     "[titleA]\n"
                     "keyA1=valueA1\n"
@@ -356,7 +356,7 @@ syntax_error_title_test_() ->
    fun teardown/1,
    [
     %% セクションタイトルの前に空白
-    ?_assertMatch({error, {1, ["syntax error before: ", _]}},
+    ?_assertMatch({error, {syntax_error, 1, ["syntax error before: ", _]}},
                   parse_string("  [title]"))
    ]}.
   

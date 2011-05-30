@@ -94,8 +94,11 @@ blank_line -> blank break : '$1'.
 
 Erlang code.
 
+-spec value_of({atom(), _Line, TokenChars::string()}) -> TokenChars::string().
 value_of(Token) ->
   element(3, Token).
 
+-spec strip_values([TokenChars::string()]) -> Value::binary().
 strip_values(Values) ->
-  list_to_binary(string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t)).
+  String = string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t),
+  list_to_binary(String).
