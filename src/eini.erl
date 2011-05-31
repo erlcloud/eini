@@ -43,8 +43,8 @@
 %%
 
 -type sections() :: [section()].
--type section() :: {Title::binary(), [property()]}.
--type property() :: {Key::binary(), Value::binary()}.
+-type section() :: {Title::atom(), [property()]}.
+-type property() :: {Key::atom(), Value::binary()}.
 
 -type reason() :: {illegal_character, Line::integer(), Reason::string()}
                 | {syntax_error, Line::integer(), Reason::string()}
