@@ -336,6 +336,33 @@ two_section_test_() ->
                    ))
    ]}.
 
+binary_two_section_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    ?_assertEqual({ok, [
+                        {titleA, []},
+                        {titleB, []}
+                       ]},
+                  parse_string(
+                    "[titleA]\n"
+                    "[titleB]\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {titleA,
+                         [{keyA1, <<"valueA1">>}]},
+                        {titleB,
+                         [{keyB1, <<"valueB1">>}]}
+                       ]},
+                  parse_string(
+                    <<"[titleA]\n"
+                      "keyA1=valueA1\n"
+                      "[titleB]  \n"
+                      "keyB1=valueB1\n">>
+                   ))
+   ]}.
+
 lex_error_title_test_() ->
   {setup,
    fun setup/0,
