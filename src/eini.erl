@@ -19,7 +19,7 @@
 
 -author('shino@accense.com').
 
--export([parse_string/1]).
+-export([parse/1]).
 %% for debug use
 -export([lex/1, parse_tokens/1]).
 
@@ -51,10 +51,12 @@
                 | {duplicate_title, Title::binary()}
                 | {duplicate_key, Title::binary(), Key::binary()}.
 
--spec parse_string(string()) -> {ok, sections()}
-                              | {error, reason()}.
-parse_string(String) when is_list(String) ->
-  case lex(String) of
+-spec parse(Content:: string() | binary()) -> {ok, sections()}
+                                            | {error, reason()}.
+parse(Content) when is_binary(Content) ->
+  parse(binary_to_list(Content));
+parse(Content) when is_list(Content) ->
+  case lex(Content) of
     {ok, Tokens} ->
       parse_and_validate(Tokens);
     {error, Reason} ->

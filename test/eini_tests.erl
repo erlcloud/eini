@@ -4,13 +4,16 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
--import(eini, [parse_string/1]).
+-import(eini, [parse/1]).
 
 setup() ->
   ok.
 
 teardown(_) ->
   ok.
+
+parse_string(String) ->
+  parse(String).
 
 empty_test_() ->
   {setup,
