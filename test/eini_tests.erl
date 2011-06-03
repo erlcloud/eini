@@ -12,16 +12,13 @@ setup() ->
 teardown(_) ->
   ok.
 
-parse_string(String) ->
-  parse(String).
-
 empty_test_() ->
   {setup,
    fun setup/0,
    fun teardown/1,
    [
-    ?_assertEqual({ok, []}, parse_string("")),
-    ?_assertEqual({ok, []}, parse_string("\n"))
+    ?_assertEqual({ok, []}, parse("")),
+    ?_assertEqual({ok, []}, parse("\n"))
    ]}.
 
 one_section_title_only_test_() ->
@@ -33,21 +30,21 @@ one_section_title_only_test_() ->
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                    )),
     %% Title only, but trailing spaces
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                    )),
     %% Title only, but comment lines
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "; comment line\n"
                     "  \n"
                     "[title]\n"
@@ -55,7 +52,7 @@ one_section_title_only_test_() ->
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "; comment line\n"
                     "; comment line 2\n"
                     "  \n"
@@ -64,7 +61,7 @@ one_section_title_only_test_() ->
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "; comment line\n"
                     "; comment line 2\n"
                     "  \n"
@@ -75,7 +72,7 @@ one_section_title_only_test_() ->
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "\n"
                     "  \n"
                     "[title]\n"
@@ -83,7 +80,7 @@ one_section_title_only_test_() ->
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "  \n"
                     "\n"
                     "[title]\n"
@@ -92,7 +89,7 @@ one_section_title_only_test_() ->
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "\n"
                     "  \n"
                     "[title]\t\s\n"
@@ -101,7 +98,7 @@ one_section_title_only_test_() ->
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "\n"
                     "  \n"
@@ -111,7 +108,7 @@ one_section_title_only_test_() ->
     ?_assertEqual({ok, [
                         {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "\n"
                     "\n"
@@ -125,7 +122,7 @@ one_section_title_only_syntax_error_test_() ->
    [
     %% No ] char
     ?_assertMatch({error, {syntax_error, 1, _Reason}},
-                  parse_string(
+                  parse(
                     "[title\n"
                    ))
    ]}.
@@ -139,7 +136,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "key1=value1\n"
                    )),
@@ -147,7 +144,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=value1\n"
                    )),
@@ -155,7 +152,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "\n"
                     "key1=value1\n"
@@ -164,7 +161,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "; comment\n"
                     "key1=value1\n"
@@ -173,7 +170,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=value1\n"
                     "; comment\n"
@@ -182,7 +179,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "\n"
                     "    \n"
@@ -194,7 +191,7 @@ one_section_title_and_one_prop_test_() ->
                         {title, 
                          [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=value1\n"
                     "\n"
@@ -206,7 +203,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "\n"
                     "    \n"
@@ -221,7 +218,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"va[lue1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=va[lue1\n"
                    )),
@@ -229,7 +226,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"valu]e1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=valu]e1\n"
                    )),
@@ -237,7 +234,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"va[lu]e1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=va[lu]e1\n"
                    )),
@@ -245,7 +242,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1;continue">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=value1;continue\n"
                    )),
@@ -253,7 +250,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1   =value1\n"
                    )),
@@ -261,7 +258,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=  value1  \n"
                    )),
@@ -269,7 +266,7 @@ one_section_title_and_one_prop_test_() ->
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1$% '""#!+*=@/:+">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "key1=value1$% '""#!+*=@/:+\n"
                    ))
@@ -286,7 +283,7 @@ one_section_title_and_two_props_test_() ->
                          [{key1, <<"value1">>},
                           {key2, <<"value2">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "key1=value1\n"
                     "key2=value2\n"
@@ -297,7 +294,7 @@ one_section_title_and_two_props_test_() ->
                          [{key1, <<"value1">>},
                           {key2, <<"value2">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "\n"
                     "key1=value1\n"
@@ -318,7 +315,7 @@ two_section_test_() ->
                         {titleA, []},
                         {titleB, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "[titleB]\n"
                    )),
@@ -328,7 +325,7 @@ two_section_test_() ->
                         {titleB,
                          [{keyB1, <<"valueB1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "keyA1=valueA1\n"
                     "[titleB]  \n"
@@ -345,7 +342,7 @@ binary_two_section_test_() ->
                         {titleA, []},
                         {titleB, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "[titleB]\n"
                    )),
@@ -355,7 +352,7 @@ binary_two_section_test_() ->
                         {titleB,
                          [{keyB1, <<"valueB1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     <<"[titleA]\n"
                       "keyA1=valueA1\n"
                       "[titleB]  \n"
@@ -370,9 +367,9 @@ lex_error_title_test_() ->
    [
     %% セクションタイトルの中に vertical tab
     ?_assertMatch({error, {illegal_character, 1, _Reason}},
-                  parse_string("[ti\vtle]")),
+                  parse("[ti\vtle]")),
     ?_assertMatch({error, {illegal_character, 3, _Reason}},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "keyA1=valueA1\n"
                     "[tit\vleB]  \n"
@@ -387,10 +384,10 @@ syntax_error_title_test_() ->
    [
     %% セクションタイトルの前に空白
     ?_assertMatch({error, {syntax_error, 1, ["syntax error before: ", _]}},
-                  parse_string("  [title]")),
+                  parse("  [title]")),
     %% セクションタイトルの中に空白
     ?_assertMatch({error, {syntax_error, 3, _Reason}},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "keyA1=valueA1\n"
                     "[tit  leB]\n"
@@ -404,7 +401,7 @@ dup_title_test_() ->
    fun teardown/ 1,
    [
     ?_assertEqual({error, {duplicate_title, titleA}},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "keyA1=valueA1\n"
                     "[titleA]  \n"
@@ -418,7 +415,7 @@ dup_key_test_() ->
    fun teardown/ 1,
    [
     ?_assertEqual({error, {duplicate_key, titleB, key2}},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "key1=value1\n"
                     "[titleB]  \n"
@@ -428,7 +425,7 @@ dup_key_test_() ->
                     "key2=value4\n"
                    )),
     ?_assertEqual({error, {duplicate_key, titleB, key2}},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "key1=value1\n"
                     "[titleB]  \n"
