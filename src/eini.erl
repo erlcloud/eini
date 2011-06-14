@@ -20,27 +20,9 @@
 -author('shino@accense.com').
 
 -export([parse/1]).
+
 %% for debug use
 -export([lex/1, parse_tokens/1]).
-
-%% TODO(shino): Add spec's
-
-%% Input:
-%%
-%% [title1]
-%% key = value
-%% key2 = value2
-%% [title2]
-%% key = value
-%%
-%% Result form:
-%%
-%% [
-%%  {<<"title1">>, [{<<"key">>, <<"value">>},
-%%                  {<<"key2">>, <<"value2">>}}],
-%%  {<<"title2">>, [{<<"key">>, <<"value">>}]}
-%% ].
-%%
 
 -type sections() :: [section()].
 -type section() :: {Title::atom(), [property()]}.
