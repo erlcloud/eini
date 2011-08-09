@@ -23,10 +23,11 @@ Definitions.
 K = [a-zA-Z0-9_\.]+
 
 %% Characters for values, printable except =, [ and ]
+%% \x3b : $;
 %% \x3d : $=
 %% \x5b : $[
 %% \x5d : $]
-V = [\x21-\x3c\x3e-\x5a\x5c\x5e-\x7e]+
+V = [\x21-\x3a\x3c\x3e-\x5a\x5c\x5e-\x7e]+
 
 %% spaces and breaks
 S = [\s\t]

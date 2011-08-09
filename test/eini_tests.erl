@@ -26,6 +26,23 @@ one_section_title_only_test_() ->
    fun setup/0,
    fun teardown/1,
    [
+    %% comment only
+    ?_assertEqual({ok, []},
+                  parse(
+                    ";"
+                   )),
+    ?_assertEqual({ok, []},
+                  parse(
+                    ";    "
+                   )),
+    ?_assertEqual({ok, []},
+                  parse(
+                    "; comment"
+                   )),
+    ?_assertEqual({ok, []},
+                  parse(
+                    "; comment in Japanese 日本語"
+                   )),
     %% Title only
     ?_assertEqual({ok, [
                         {title, []}
@@ -237,6 +254,14 @@ one_section_title_and_one_prop_test_() ->
                   parse(
                     "[title]  \n"
                     "key1=va[lu]e1\n"
+                   )),
+    %% value has < and > chars
+    ?_assertEqual({ok, [
+                        {title, [{key1, <<"va<lu>e1">>}]}
+                       ]},
+                  parse(
+                    "[title]  \n"
+                    "key1=va<lu>e1\n"
                    )),
     %% value has ; char
     ?_assertEqual({ok, [
