@@ -365,7 +365,7 @@ lex_error_title_test_() ->
    fun setup/0,
    fun teardown/ 1,
    [
-    %% セクションタイトルの中に vertical tab
+    %% vertical tab in section title
     ?_assertMatch({error, {illegal_character, 1, _Reason}},
                   parse("[ti\vtle]")),
     ?_assertMatch({error, {illegal_character, 3, _Reason}},
@@ -382,10 +382,10 @@ syntax_error_title_test_() ->
    fun setup/0,
    fun teardown/1,
    [
-    %% セクションタイトルの前に空白
+    %% blank char before section title
     ?_assertMatch({error, {syntax_error, 1, ["syntax error before: ", _]}},
                   parse("  [title]")),
-    %% セクションタイトルの中に空白
+    %% blank char in section title
     ?_assertMatch({error, {syntax_error, 3, _Reason}},
                   parse(
                     "[titleA]\n"
