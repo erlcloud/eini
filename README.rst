@@ -25,5 +25,21 @@ Result form::
     [{key, <<"value">>}]}
   ].
 
+History
+=======
 
-Copyright by Accense Technology, Inc.
+1.0.0
+-----
+
+Initial release
+
+Copyright
+=========
+
+Copyright 2011 by Accense Technology, Inc.
+
+License
+=======
+
+Apache License v2.
+See ``LICENSE`` file for detail.
