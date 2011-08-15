@@ -31,7 +31,8 @@ History
 1.0.0
 -----
 
-Initial release
+:release: 2011-08-15
+:summary: Initial release
 
 Copyright
 =========
