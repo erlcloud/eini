@@ -4,7 +4,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
--import(eini, [parse_string/1]).
+-import(eini, [parse/1]).
 
 setup() ->
   ok.
@@ -17,8 +17,8 @@ empty_test_() ->
    fun setup/0,
    fun teardown/1,
    [
-    ?_assertEqual({ok, []}, parse_string("")),
-    ?_assertEqual({ok, []}, parse_string("\n"))
+    ?_assertEqual({ok, []}, parse("")),
+    ?_assertEqual({ok, []}, parse("\n"))
    ]}.
 
 one_section_title_only_test_() ->
@@ -26,47 +26,59 @@ one_section_title_only_test_() ->
    fun setup/0,
    fun teardown/1,
    [
+    %% comment only
+    ?_assertEqual({ok, []},
+                  parse(
+                    ";"
+                   )),
+    ?_assertEqual({ok, []},
+                  parse(
+                    ";    "
+                   )),
+    ?_assertEqual({ok, []},
+                  parse(
+                    "; comment"
+                   )),
+    ?_assertEqual({ok, []},
+                  parse(
+                    "; comment in Japanese 日本語"
+                   )),
     %% Title only
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                    )),
     %% Title only, but trailing spaces
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                    )),
     %% Title only, but comment lines
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "; comment line\n"
                     "  \n"
                     "[title]\n"
                    )),
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "; comment line\n"
                     "; comment line 2\n"
                     "  \n"
                     "[title]\n"
                    )),
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "; comment line\n"
                     "; comment line 2\n"
                     "  \n"
@@ -75,39 +87,35 @@ one_section_title_only_test_() ->
                    )),
     %% Title only, but preceding blank lines
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "\n"
                     "  \n"
                     "[title]\n"
                    )),
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "  \n"
                     "\n"
                     "[title]\n"
                    )),
     %% Title only, but preceding blank lines and trailing spaces
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "\n"
                     "  \n"
                     "[title]\t\s\n"
                    )),
     %% Title only, but trailing blank lines
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "\n"
                     "  \n"
@@ -115,10 +123,9 @@ one_section_title_only_test_() ->
                    )),
     %% Title only, but trailing spaces and trailing blank lines
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, []}]}
+                        {title, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "\n"
                     "\n"
@@ -131,8 +138,8 @@ one_section_title_only_syntax_error_test_() ->
    fun teardown/1,
    [
     %% No ] char
-    ?_assertMatch({error, {1, _Reason}},
-                  parse_string(
+    ?_assertMatch({error, {syntax_error, 1, _Reason}},
+                  parse(
                     "[title\n"
                    ))
    ]}.
@@ -144,58 +151,52 @@ one_section_title_and_one_prop_test_() ->
    [
     %% Simple case
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "key1=value1\n"
                    )),
     %% title has trailing spaces
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=value1\n"
                    )),
     %% Single blank line between title and a prop
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "\n"
                     "key1=value1\n"
                    )),
     %% Single comment line between title and a prop
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "; comment\n"
                     "key1=value1\n"
                    )),
     %% Single comment line after a prop
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=value1\n"
                     "; comment\n"
                    )),
     %% Multi blank lines between title and a prop
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "\n"
                     "    \n"
@@ -204,10 +205,10 @@ one_section_title_and_one_prop_test_() ->
                    )),
     %% Multi blank lines after a prop
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, 
+                         [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=value1\n"
                     "\n"
@@ -217,10 +218,9 @@ one_section_title_and_one_prop_test_() ->
     %% Multi blank lines between title and a prop and
     %% multi blank lines after a prop
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "\n"
                     "    \n"
@@ -233,64 +233,65 @@ one_section_title_and_one_prop_test_() ->
 
     %% value has [ char
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "va[lue1"}]}]}
+                        {title, [{key1, <<"va[lue1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=va[lue1\n"
                    )),
     %% value has ] char
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "valu]e1"}]}]}
+                        {title, [{key1, <<"valu]e1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=valu]e1\n"
                    )),
     %% value has [ and ] chars
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "va[lu]e1"}]}]}
+                        {title, [{key1, <<"va[lu]e1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=va[lu]e1\n"
                    )),
+    %% value has < and > chars
+    ?_assertEqual({ok, [
+                        {title, [{key1, <<"va<lu>e1">>}]}
+                       ]},
+                  parse(
+                    "[title]  \n"
+                    "key1=va<lu>e1\n"
+                   )),
     %% value has ; char
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1;continue"}]}]}
+                        {title, [{key1, <<"value1;continue">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=value1;continue\n"
                    )),
     %% key has trailing spaces
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1   =value1\n"
                    )),
     %% value has preceding and trailing spaces
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1"}]}]}
+                        {title, [{key1, <<"value1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]  \n"
                     "key1=  value1  \n"
                    )),
     %% value has characters which can not used in titles or keys
     ?_assertEqual({ok, [
-                        {"title", 
-                         [{default, [{"key1", "value1$% '""#!+*=@/:+"}]}]}
+                        {title, [{key1, <<"value1$% '""#!+*=@/:+">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "key1=value1$% '""#!+*=@/:+\n"
                    ))
@@ -303,24 +304,22 @@ one_section_title_and_two_props_test_() ->
    [
     %% Simple case
     ?_assertEqual({ok, [
-                        {"title",
-                         [{default,
-                           [{"key1", "value1"},
-                            {"key2", "value2"}]}]}
+                        {title,
+                         [{key1, <<"value1">>},
+                          {key2, <<"value2">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "key1=value1\n"
                     "key2=value2\n"
                    )),
     %% Blank lines
     ?_assertEqual({ok, [
-                        {"title",
-                         [{default,
-                           [{"key1", "value1"},
-                            {"key2", "value2"}]}]}
+                        {title,
+                         [{key1, <<"value1">>},
+                          {key2, <<"value2">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[title]\n"
                     "\n"
                     "key1=value1\n"
@@ -338,22 +337,20 @@ two_section_test_() ->
    fun teardown/1,
    [
     ?_assertEqual({ok, [
-                        {"titleA", [{default, []}]},
-                        {"titleB", [{default, []}]}
+                        {titleA, []},
+                        {titleB, []}
                        ]},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "[titleB]\n"
                    )),
     ?_assertEqual({ok, [
-                        {"titleA",
-                         [{default,
-                           [{"keyA1", "valueA1"}]}]},
-                        {"titleB",
-                         [{default,
-                           [{"keyB1", "valueB1"}]}]}
+                        {titleA,
+                         [{keyA1, <<"valueA1">>}]},
+                        {titleB,
+                         [{keyB1, <<"valueB1">>}]}
                        ]},
-                  parse_string(
+                  parse(
                     "[titleA]\n"
                     "keyA1=valueA1\n"
                     "[titleB]  \n"
@@ -361,12 +358,105 @@ two_section_test_() ->
                    ))
    ]}.
 
-syntax_error_title_test() ->
+binary_two_section_test_() ->
   {setup,
    fun setup/0,
    fun teardown/1,
    [
-    %% セクションタイトルの前に空白
-    ?_assertMatch({error, {_Line, _Module, _Reason}}, parse_string(" [title]"))
+    ?_assertEqual({ok, [
+                        {titleA, []},
+                        {titleB, []}
+                       ]},
+                  parse(
+                    "[titleA]\n"
+                    "[titleB]\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {titleA,
+                         [{keyA1, <<"valueA1">>}]},
+                        {titleB,
+                         [{keyB1, <<"valueB1">>}]}
+                       ]},
+                  parse(
+                    <<"[titleA]\n"
+                      "keyA1=valueA1\n"
+                      "[titleB]  \n"
+                      "keyB1=valueB1\n">>
+                   ))
+   ]}.
+
+lex_error_title_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/ 1,
+   [
+    %% vertical tab in section title
+    ?_assertMatch({error, {illegal_character, 1, _Reason}},
+                  parse("[ti\vtle]")),
+    ?_assertMatch({error, {illegal_character, 3, _Reason}},
+                  parse(
+                    "[titleA]\n"
+                    "keyA1=valueA1\n"
+                    "[tit\vleB]  \n"
+                    "keyB1=valueB1\n"
+                   ))
    ]}.
   
+syntax_error_title_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    %% blank char before section title
+    ?_assertMatch({error, {syntax_error, 1, ["syntax error before: ", _]}},
+                  parse("  [title]")),
+    %% blank char in section title
+    ?_assertMatch({error, {syntax_error, 3, _Reason}},
+                  parse(
+                    "[titleA]\n"
+                    "keyA1=valueA1\n"
+                    "[tit  leB]\n"
+                    "keyB1=valueB1\n"
+                   ))
+   ]}.
+  
+dup_title_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/ 1,
+   [
+    ?_assertEqual({error, {duplicate_title, titleA}},
+                  parse(
+                    "[titleA]\n"
+                    "keyA1=valueA1\n"
+                    "[titleA]  \n"
+                    "keyB1=valueB1\n"
+                   ))
+   ]}.
+  
+dup_key_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/ 1,
+   [
+    ?_assertEqual({error, {duplicate_key, titleB, key2}},
+                  parse(
+                    "[titleA]\n"
+                    "key1=value1\n"
+                    "[titleB]  \n"
+                    "key1=value1\n"
+                    "key2=value2\n"
+                    "key3=value3\n"
+                    "key2=value4\n"
+                   )),
+    ?_assertEqual({error, {duplicate_key, titleB, key2}},
+                  parse(
+                    "[titleA]\n"
+                    "key1=value1\n"
+                    "[titleB]  \n"
+                    "key1=value1\n"
+                    "key2=value2\n"
+                    "key3=value3\n"
+                    "key2  =  value4\n"
+                   ))
+   ]}.

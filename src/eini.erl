@@ -19,56 +19,42 @@
 
 -author('shino@accense.com').
 
--export([parse_string/1, parse_file/1]).
+-export([parse/1]).
+
 %% for debug use
 -export([lex/1, parse_tokens/1]).
 
-%% TODO(shino): Add spec's
+-type sections() :: [section()].
+-type section() :: {Title::atom(), [property()]}.
+-type property() :: {Key::atom(), Value::binary()}.
 
-%% Input:
-%%
-%% [title1 "subtitle1"]
-%% key = value
-%% [title1 "subtitle2"]
-%% key = value
-%% [title2]
-%% key = value
-%%
-%% Result form:
-%%
-%% [
-%%  {"title1", [{"subtitle1", KVs}},
-%%              {"subbitle2", KVs}}],
-%%  {"title2", {default,     KVs}}
-%% ].
-%%
-%% KVs are proplists of keys and values
-parse_string(String) when is_binary(String) ->
-  parse_string(binary_to_list(String));
-parse_string(String) when is_list(String) ->
-  case lex(String) of
+-type reason() :: {illegal_character, Line::integer(), Reason::string()}
+                | {syntax_error, Line::integer(), Reason::string()}
+                | {duplicate_title, Title::binary()}
+                | {duplicate_key, Title::binary(), Key::binary()}.
+
+-spec parse(Content:: string() | binary()) -> {ok, sections()}
+                                            | {error, reason()}.
+parse(Content) when is_binary(Content) ->
+  parse(binary_to_list(Content));
+parse(Content) when is_list(Content) ->
+  case lex(Content) of
     {ok, Tokens} ->
-      parse_and_collect(Tokens);
+      parse_and_validate(Tokens);
     {error, Reason} ->
       {error, Reason}
   end.
 
-parse_and_collect(Tokens) ->
+parse_and_validate(Tokens) ->
   case parse_tokens(Tokens) of
     {ok, Parsed} ->
-      collect_subsection(proplists:get_keys(Parsed), Parsed, []);
+      validate(Parsed);
     {error, Reason} ->
       {error, Reason}
   end.
 
-parse_file(Filename) ->
-  case file:read_file(Filename) of
-    {ok, Binary} -> parse_string(Binary);
-    Error -> Error
-  end.
-
-lex(String) when is_binary(String) ->
-  lex(binary_to_list(String));
+-spec lex(string()) -> {ok, list(Token::tuple())}
+                     | {error, {illegal_character, Line::integer(), Reason::string()}}.
 lex(String) when is_list(String) ->
   %% Add \n char at the end if does NOT end by \n
   %% TOD(shino): more simple logic?
@@ -88,21 +74,44 @@ lex(String) when is_list(String) ->
       {ok, RestTokens};
     {ok, Tokens, _EndLine} ->
       {ok, Tokens};
-    ErrorInfo ->
-      {error, ErrorInfo}
+    {error, {ErrorLine, Mod, Reason}, _EndLine} ->
+      {error, {illegal_character, ErrorLine, Mod:format_error(Reason)}}
   end.
   
+-spec parse_tokens(Token::tuple()) ->
+                      {ok, sections()}
+                    | {error, {syntax_error, Line::integer(), Reason::string()}}.
 parse_tokens(Tokens) ->
   case eini_parser:parse(Tokens) of
     {ok, Res} ->
       {ok, Res};
     {error, {Line, Mod, Reason}} ->
-      {error, {Line, Mod:format_error(Reason)}}
+      {error, {syntax_error, Line, Mod:format_error(Reason)}}
   end.
 
-collect_subsection([], _Parsed, Res) ->
-  {ok, Res};
-collect_subsection([Key|Keys], Parsed, Res) ->
-  Subsections = proplists:get_all_values(Key, Parsed),
-  collect_subsection(Keys, Parsed, [{Key, Subsections} | Res]).
-    
+-spec validate(sections()) ->
+                      {ok, sections()}
+                    | {error, {duplicate_title, Title::binary()}}
+                    | {error, {duplicate_key, Title::binary(), Key::binary()}}.
+validate(Sections) ->
+  validate(Sections, [], []).
+
+validate([], _AccTitles, AccSections) ->
+  {ok, lists:reverse(AccSections)};
+validate([{Title, Properties} = Section | Sections], AccTitles, AccSections) ->
+  case lists:member(Title, AccTitles) of
+    true ->
+      {error, {duplicate_title, Title}};
+    false ->
+      validate(Sections, [Title|AccTitles], [Section|AccSections], Properties, [])
+  end.
+
+validate(Sections, AccTitles, AccSections, [], _AccKeys) ->
+  validate(Sections, AccTitles, AccSections);
+validate(Sections, AccTitles, AccSections, [{Key, _Value}|Properties], AccKeys) ->
+  case lists:member(Key, AccKeys) of
+    true ->
+      {error, {duplicate_key, hd(AccTitles), Key}};
+    false ->
+      validate(Sections, AccTitles, AccSections, Properties, [Key|AccKeys])
+  end.

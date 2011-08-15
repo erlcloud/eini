@@ -9,25 +9,38 @@ Example
 
 Input file::
 
-  [title1 "subtitle1"]
+  [title1]
   key = value
   key2 = value2
-  [title1 "subtitle2"]
-  key = value
   [title2]
   key = value
 
 Result form::
 
   [
-   {"title1", [{"subtitle1",
-                [{"key", "value"},
-                 {"key2", "value2"}]
-               },
-               {"subbitle2", [{"key", "value"}]}
-              ]},
-   {"title2", [{default, [{"key", "value"}]}]}
+   {title1,
+    [{key, <<"value">>},
+     {key2, <<"value2">>}]},
+   {title2,
+    [{key, <<"value">>}]}
   ].
 
+History
+=======
 
-Copyright by Accense Technology, Inc.
+1.0.0
+-----
+
+:release: 2011-08-15
+:summary: Initial release
+
+Copyright
+=========
+
+Copyright 2011 by Accense Technology, Inc.
+
+License
+=======
+
+Apache License v2.
+See ``LICENSE`` file for detail.

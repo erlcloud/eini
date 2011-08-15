@@ -19,15 +19,21 @@
 
 Definitions.
 
-K = [a-z][a-zA-Z0-9_\.]*
-V = [^=\[\]\s\t\n\r]+
+%% Characters for keys
+K = [a-zA-Z0-9_\.]+
+
+%% Characters for values, printable except =, [ and ]
+%% \x3b : $;
+%% \x3d : $=
+%% \x5b : $[
+%% \x5d : $]
+V = [\x21-\x3a\x3c\x3e-\x5a\x5c\x5e-\x7e]+
+
+%% spaces and breaks
 S = [\s\t]
 B = [\n\r]
 
 Rules.
-
-%% skip comment line,which has ; at the beginning of line
-%% {B};.*{B}        : {skip_token, "\n"}.
 
 %% skip empty lines or lines with space/tab chars
 {B}{S}*{B}       : {skip_token, "\n"}.
@@ -42,7 +48,6 @@ Rules.
 
 %% word-like tokens
 {S}+             : {token, {blank,   TokenLine, TokenChars}}.
-"{K}"            : {token, {quoted,  TokenLine, TokenChars}}.
 {K}              : {token, {word,    TokenLine, TokenChars}}.
 {V}              : {token, {value,   TokenLine, TokenChars}}.
 
