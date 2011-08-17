@@ -19,7 +19,9 @@
 
 Nonterminals
   whole
-  sections section
+  sections
+  sections_with_skip_lines
+  section
   title_part
   title
   property_with_skip_lines
@@ -40,10 +42,23 @@ Terminals
 
 Rootsymbol whole.
 
-whole -> sections : '$1'.
-whole -> skip_lines sections : '$2'.
-whole -> blank_line sections : '$2'.
-whole -> blank_line skip_lines sections : '$3'.
+%% Leex smash out all blank lines, but at the beggining of file is NOT.
+whole -> sections_with_skip_lines : '$1'.
+whole -> blank_line sections_with_skip_lines : '$2'.
+
+blank_line -> blank break : '$1'.
+
+%% Comment lines are treated as:
+%% 1. At the biggining of file are included into sections_with_skip_lines
+%% 2. Other comment lines are included to title_part and property_with_skip_lines
+
+skip_lines -> comment_line : ['$1'].
+skip_lines -> comment_line skip_lines : ['$1', '$2'].
+
+comment_line -> comment break : '$1'.
+
+sections_with_skip_lines -> sections : '$1'.
+sections_with_skip_lines -> skip_lines sections : '$2'.
 
 sections -> '$empty' : [].
 sections -> section sections : ['$1' | '$2'].
@@ -82,15 +97,6 @@ single_value ->  comment : value_of('$1').
 single_value -> '['      : "[".
 single_value -> '='      : "=".
 single_value -> ']'      : "]".
-
-%% ONLY a comment line at the beggining of file is NOT skipped by leex
-skip_lines -> comment_line : ['$1'].
-skip_lines -> comment_line skip_lines : ['$1', '$2'].
-
-comment_line -> comment break : '$1'.
-
-blank_line -> blank break : '$1'.
-
 
 Erlang code.
 
