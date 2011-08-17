@@ -271,6 +271,14 @@ one_section_title_and_one_prop_test_() ->
                     "[title]  \n"
                     "key1=value1;continue\n"
                    )),
+    %% key has preceding spaces
+    ?_assertEqual({ok, [
+                        {title, [{key1, <<"value1">>}]}
+                       ]},
+                  parse(
+                    "[title]  \n"
+                    "  key1=value1\n"
+                   )),
     %% key has trailing spaces
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1">>}]}
@@ -278,6 +286,14 @@ one_section_title_and_one_prop_test_() ->
                   parse(
                     "[title]  \n"
                     "key1   =value1\n"
+                   )),
+    %% key has preceding and trailing spaces
+    ?_assertEqual({ok, [
+                        {title, [{key1, <<"value1">>}]}
+                       ]},
+                  parse(
+                    "[title]  \n"
+                    "   key1   =value1\n"
                    )),
     %% value has preceding and trailing spaces
     ?_assertEqual({ok, [
@@ -410,6 +426,26 @@ syntax_error_title_test_() ->
     %% blank char before section title
     ?_assertMatch({error, {syntax_error, 1, ["syntax error before: ", _]}},
                   parse("  [title]")),
+    %% blank char before section title, with a preceding empty line
+    ?_assertMatch({error, {syntax_error, 2, ["syntax error before: ", _]}},
+                  parse("\n"
+                        "  [title]")),
+    %% blank char before section title, with preceding empty lines
+    ?_assertMatch({error, {syntax_error, 3, ["syntax error before: ", _]}},
+                  parse("\n"
+                        "\n"
+                        "  [title]")),
+    %% blank char before section title, with preceding blank lines
+    ?_assertMatch({error, {syntax_error, 3, ["syntax error before: ", _]}},
+                  parse("  \n"
+                        "\t\n"
+                        "  [title]")),
+    %% blank char before section title, with preceding comment lines
+    ?_assertMatch({error, {syntax_error, 4, ["syntax error before: ", _]}},
+                  parse("; comment 1\n"
+                        ";\n"
+                        "; comment 2\n"
+                        "  [title]")),
     %% blank char in section title
     ?_assertMatch({error, {syntax_error, 3, _Reason}},
                   parse(
@@ -417,6 +453,19 @@ syntax_error_title_test_() ->
                     "keyA1=valueA1\n"
                     "[tit  leB]\n"
                     "keyB1=valueB1\n"
+                   ))
+   ]}.
+  
+syntax_error_property_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    %% blank char in key
+    ?_assertMatch({error, {syntax_error, 2, _Reason}},
+                  parse(
+                    "[title]\n"
+                    "key with blank=value\n"
                    ))
    ]}.
   
