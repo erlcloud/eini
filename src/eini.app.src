@@ -1,6 +1,6 @@
 {application, eini, [
     {description, "An Erlang INI parser"},
-    {vsn, "1.0.0"},
+    {vsn, "1.0.1"},
     {applications, [kernel, stdlib]},
     {modules, []},
     {registered, []}
