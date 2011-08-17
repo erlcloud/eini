@@ -28,6 +28,15 @@ Result form::
 History
 =======
 
+1.0.1
+-----
+
+:release: 2011-08-17
+:summary: Line number bug fix
+
+- Line numbers in error messages were wrong.
+  Thanks to @Hexa for reporting the bug.
+
 1.0.0
 -----
 

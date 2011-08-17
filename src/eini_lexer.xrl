@@ -35,8 +35,8 @@ B = [\n\r]
 
 Rules.
 
-%% skip empty lines or lines with space/tab chars
-{B}{S}*{B}       : {skip_token, "\n"}.
+%% skip empty or blank lines or lines with space/tab chars
+{B}({S}*{B})+    : {token, {break,   TokenLine}}.
 
 %% mark line break by token 'break' in order to use as delimiters
 {B}              : {token, {break,   TokenLine}}.
