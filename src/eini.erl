@@ -163,7 +163,7 @@ handle_call({register, Filename, Section, Name, Value}, _From, State) ->
     true ->
       {reply, ok, State};
     false ->
-      {reply, {error, duplicate_key}, State}
+      {reply, {error, {duplicate_key, Section, Name}}, State}
   end;
 handle_call({register, Filename, Binary}, _From, State) ->
   case eini:parse(Binary) of
@@ -216,5 +216,5 @@ insert_section(Filename, ListOfSection, Section, [{Name, Value}|ListOfParameter]
     true ->
       insert_section(Filename, ListOfSection, Section, ListOfParameter);
     false ->
-      {error, duplicate_key}
+      {error, {duplicate_key, Section, Name}}
   end.

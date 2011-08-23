@@ -534,9 +534,9 @@ register_test_() ->
                        eini:register("spam.ini", title, key1, <<"value">>)),
           ?assertEqual(<<"value">>,
                        eini:lookup_value("spam.ini", title, key1)),
-          ?assertEqual({error, duplicate_key},
+          ?assertEqual({error, {duplicate_key, title, key1}},
                        eini:register("spam.ini", title, key1, <<"value">>)),
-          ?assertEqual({error, duplicate_key},
+          ?assertEqual({error, {duplicate_key, title, key}},
                        eini:register("spam.ini", "[title]\nkey=value"))
         end}
     ]
