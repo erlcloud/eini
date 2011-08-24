@@ -133,8 +133,8 @@ validate(Sections, AccTitles, AccSections, [{Key, _Value}|Properties], AccKeys) 
   end.
 
 -spec lookup_value(file:name(), atom(), atom()) -> not_found | binary().
-lookup_value(Filename, Section, Name) ->
-  case ets:lookup(?EINI_TABLE, {Filename, Section, Name}) of
+lookup_value(Filename, Section, Key) ->
+  case ets:lookup(?EINI_TABLE, {Filename, Section, Key}) of
     [] ->
       not_found;
     [{_, Value}] ->
@@ -146,8 +146,8 @@ register(Filename, Binary) ->
   gen_server:call(?MODULE, {register, Filename, Binary}).  
 
 -spec register(file:name(), atom(), atom(), any()) -> ok | {error, duplicate_key}.
-register(Filename, Section, Name, Value) when is_atom(Section) andalso is_atom(Name) ->
-  gen_server:call(?MODULE, {register, Filename, Section, Name, Value}).  
+register(Filename, Section, Key, Value) when is_atom(Section) andalso is_atom(Key) ->
+  gen_server:call(?MODULE, {register, Filename, Section, Key, Value}).  
 
 start_link() ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
@@ -158,12 +158,12 @@ init(_Args) ->
   _Tid = ets:new(?EINI_TABLE, Options),
   {ok, {}}.
 
-handle_call({register, Filename, Section, Name, Value}, _From, State) ->
-  case ets:insert_new(?EINI_TABLE, {{Filename, Section, Name}, Value}) of
+handle_call({register, Filename, Section, Key, Value}, _From, State) ->
+  case ets:insert_new(?EINI_TABLE, {{Filename, Section, Key}, Value}) of
     true ->
       {reply, ok, State};
     false ->
-      {reply, {error, {duplicate_key, Section, Name}}, State}
+      {reply, {error, {duplicate_key, Section, Key}}, State}
   end;
 handle_call({register, Filename, Binary}, _From, State) ->
   case eini:parse(Binary) of
@@ -205,16 +205,16 @@ is_section(Filename, Section) ->
 -spec insert_sections(file:name(), [{atom(), [property()]}]) -> ok.
 insert_sections(_Filename, []) ->
   ok;
-insert_sections(Filename, [{Section, ListOfParameter}|ListOfSection]) ->
-  insert_section(Filename, ListOfSection, Section, ListOfParameter).
+insert_sections(Filename, [{Section, ListOfProperty}|ListOfSection]) ->
+  insert_section(Filename, ListOfSection, Section, ListOfProperty).
 
 -spec insert_section(file:name(), sections(), atom(), [property()]) -> ok.
 insert_section(Filename, ListOfSection, _Section, []) ->
   insert_sections(Filename, ListOfSection);
-insert_section(Filename, ListOfSection, Section, [{Name, Value}|ListOfParameter]) ->
-  case ets:insert_new(?EINI_TABLE, {{Filename, Section, Name}, Value}) of
+insert_section(Filename, ListOfSection, Section, [{Key, Value}|ListOfProperty]) ->
+  case ets:insert_new(?EINI_TABLE, {{Filename, Section, Key}, Value}) of
     true ->
-      insert_section(Filename, ListOfSection, Section, ListOfParameter);
+      insert_section(Filename, ListOfSection, Section, ListOfProperty);
     false ->
-      {error, {duplicate_key, Section, Name}}
+      {error, {duplicate_key, Section, Key}}
   end.
