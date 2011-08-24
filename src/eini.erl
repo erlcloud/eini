@@ -18,11 +18,27 @@
 -module(eini).
 
 -author('shino@accense.com').
+-author('nakai@accense.com').
 
 -export([parse/1]).
 
+-export([lookup_value/3,
+         register/2,
+         register/4,
+         is_section/2]).
+
+-export([start_link/0]).
+-export([init/1,
+         handle_call/3,
+         handle_cast/2,
+         handle_info/2,
+         terminate/2,
+         code_change/3]).
+
 %% for debug use
 -export([lex/1, parse_tokens/1]).
+
+-define(EINI_TABLE, eini_table).
 
 -type sections() :: [section()].
 -type section() :: {Title::atom(), [property()]}.
@@ -114,4 +130,91 @@ validate(Sections, AccTitles, AccSections, [{Key, _Value}|Properties], AccKeys) 
       {error, {duplicate_key, hd(AccTitles), Key}};
     false ->
       validate(Sections, AccTitles, AccSections, Properties, [Key|AccKeys])
+  end.
+
+-spec lookup_value(file:name(), atom(), atom()) -> not_found | binary().
+lookup_value(Filename, Section, Key) ->
+  case ets:lookup(?EINI_TABLE, {Filename, Section, Key}) of
+    [] ->
+      not_found;
+    [{_, Value}] ->
+      Value
+  end.
+
+-spec register(file:name(), binary()) -> ok | {error, reason()}.
+register(Filename, Binary) ->
+  gen_server:call(?MODULE, {register, Filename, Binary}).  
+
+-spec register(file:name(), atom(), atom(), any()) -> ok | {error, duplicate_key}.
+register(Filename, Section, Key, Value) when is_atom(Section) andalso is_atom(Key) ->
+  gen_server:call(?MODULE, {register, Filename, Section, Key, Value}).  
+
+start_link() ->
+  gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+init(_Args) ->
+  process_flag(trap_exit, true),
+  Options = [set, protected, named_table, {read_concurrency, true}],
+  _Tid = ets:new(?EINI_TABLE, Options),
+  {ok, {}}.
+
+handle_call({register, Filename, Section, Key, Value}, _From, State) ->
+  case ets:insert_new(?EINI_TABLE, {{Filename, Section, Key}, Value}) of
+    true ->
+      {reply, ok, State};
+    false ->
+      {reply, {error, {duplicate_key, Section, Key}}, State}
+  end;
+handle_call({register, Filename, Binary}, _From, State) ->
+  case eini:parse(Binary) of
+    {ok, Sections} ->
+      case insert_sections(Filename, Sections) of
+        ok ->
+          true = ets:insert_new(?EINI_TABLE, {Filename, Binary}),
+          {reply, ok, State};
+        {error, Reason} ->
+          {reply, {error, Reason}, State}
+      end;
+    {error, Reason} ->
+      {reply, {error, Reason}, State}
+  end;
+handle_call(_Request, _From, State) ->
+  {noreply, State}.
+
+handle_cast(_Request, State) ->
+  {noreply, State}.
+
+handle_info(_Request, State) ->
+  {noreply, State}.
+
+terminate(_Reason, _State) ->
+  ok.
+
+code_change(_OldVsn, State, _Extra) ->
+  {ok, State}.
+
+-spec is_section(file:name(), atom()) -> boolean().
+is_section(Filename, Section) ->
+  case ets:match_object(?EINI_TABLE, {{Filename, Section, '_'}, '_'}) of
+    [] ->
+      false;
+    _ ->
+      true
+  end.
+
+-spec insert_sections(file:name(), [{atom(), [property()]}]) -> ok.
+insert_sections(_Filename, []) ->
+  ok;
+insert_sections(Filename, [{Section, ListOfProperty}|ListOfSection]) ->
+  insert_section(Filename, ListOfSection, Section, ListOfProperty).
+
+-spec insert_section(file:name(), sections(), atom(), [property()]) -> ok.
+insert_section(Filename, ListOfSection, _Section, []) ->
+  insert_sections(Filename, ListOfSection);
+insert_section(Filename, ListOfSection, Section, [{Key, Value}|ListOfProperty]) ->
+  case ets:insert_new(?EINI_TABLE, {{Filename, Section, Key}, Value}) of
+    true ->
+      insert_section(Filename, ListOfSection, Section, ListOfProperty);
+    false ->
+      {error, {duplicate_key, Section, Key}}
   end.
