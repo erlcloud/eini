@@ -453,7 +453,14 @@ syntax_error_title_test_() ->
                     "keyA1=valueA1\n"
                     "[tit  leB]\n"
                     "keyB1=valueB1\n"
-                   ))
+                   )),
+    %% comment after title
+    ?_assertMatch({error, {syntax_error, 1, ["syntax error before: ", _]}},
+                  parse("[title] ;comment")),
+    %% comment after blank
+    ?_assertMatch({error, {syntax_error, 2, ["syntax error before: ", _]}},
+                  parse("[title]\n"
+                        " ;comment\n"))
    ]}.
   
 syntax_error_property_test_() ->
@@ -466,7 +473,11 @@ syntax_error_property_test_() ->
                   parse(
                     "[title]\n"
                     "key with blank=value\n"
-                   ))
+                   )),
+    %% comment after blank
+    ?_assertMatch({error, {syntax_error, 2, ["syntax error before: ", _]}},
+                  parse("[title]\n"
+                        "key;comment=value\n"))
    ]}.
   
 dup_title_test_() ->
