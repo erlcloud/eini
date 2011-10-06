@@ -28,6 +28,23 @@ Result form::
 History
 =======
 
+1.2.0
+-----
+
+:release: 2011-10-05
+
+no changed 1.1.0
+
+1.1.0
+-----
+
+**proposal**
+
+:release: 2011-08-24
+:summary: ETS To Store the ini data
+
+- To Store ini data.
+
 1.0.1
 -----
 
