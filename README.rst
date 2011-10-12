@@ -28,12 +28,19 @@ Result form::
 History
 =======
 
+1.2.1
+-----
+
+:release: 2011-10-12
+
+- cobertura report with covertool
+
 1.2.0
 -----
 
 :release: 2011-10-05
 
-no changed 1.1.0
+- no change 1.1.0
 
 1.1.0
 -----
