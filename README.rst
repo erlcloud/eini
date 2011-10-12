@@ -28,6 +28,30 @@ Result form::
 History
 =======
 
+1.2.1
+-----
+
+:release: 2011-10-12
+
+- cobertura report with covertool
+
+1.2.0
+-----
+
+:release: 2011-10-05
+
+- no change 1.1.0
+
+1.1.0
+-----
+
+**proposal**
+
+:release: 2011-08-24
+:summary: ETS To Store the ini data
+
+- To Store ini data.
+
 1.0.1
 -----
 

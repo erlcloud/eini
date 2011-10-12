@@ -453,7 +453,14 @@ syntax_error_title_test_() ->
                     "keyA1=valueA1\n"
                     "[tit  leB]\n"
                     "keyB1=valueB1\n"
-                   ))
+                   )),
+    %% comment after title
+    ?_assertMatch({error, {syntax_error, 1, ["syntax error before: ", _]}},
+                  parse("[title] ;comment")),
+    %% comment after blank
+    ?_assertMatch({error, {syntax_error, 2, ["syntax error before: ", _]}},
+                  parse("[title]\n"
+                        " ;comment\n"))
    ]}.
   
 syntax_error_property_test_() ->
@@ -466,7 +473,11 @@ syntax_error_property_test_() ->
                   parse(
                     "[title]\n"
                     "key with blank=value\n"
-                   ))
+                   )),
+    %% comment after blank
+    ?_assertMatch({error, {syntax_error, 2, ["syntax error before: ", _]}},
+                  parse("[title]\n"
+                        "key;comment=value\n"))
    ]}.
   
 dup_title_test_() ->
@@ -509,3 +520,56 @@ dup_key_test_() ->
                     "key2  =  value4\n"
                    ))
    ]}.
+
+register_test_() ->
+  {foreach,
+    fun() ->
+      application:start(eini)
+    end,
+    fun(_) ->
+      application:stop(eini)
+    end,
+    [
+      {"syntax Error",
+        ?_assertMatch({error, {syntax_error, 1, _Reason}},
+                       eini:register("spam.ini" ,"[title\n"))},
+      {"",
+        fun() ->
+          ?assertEqual(ok,
+                       eini:register("spam.ini", "[title]\nkey=value")),
+          ?assertEqual(<<"value">>,
+                       eini:lookup_value("spam.ini", title, key)),
+          ?assertEqual(not_found,
+                       eini:lookup_value("spam.ini", title, key1)),
+          ?assertEqual(ok,
+                       eini:register("spam.ini", title, key1, <<"value">>)),
+          ?assertEqual(<<"value">>,
+                       eini:lookup_value("spam.ini", title, key1)),
+          ?assertEqual({error, {duplicate_key, title, key1}},
+                       eini:register("spam.ini", title, key1, <<"value">>)),
+          ?assertEqual({error, {duplicate_key, title, key}},
+                       eini:register("spam.ini", "[title]\nkey=value"))
+        end}
+    ]
+  }.
+
+is_section_test_() ->
+  {foreach,
+    fun() ->
+      application:start(eini)
+    end,
+    fun(_) ->
+      application:stop(eini)
+    end,
+    [
+      {"",
+        fun() ->
+          ?assertEqual(ok,
+                       eini:register("spam.ini", "[title]\nkey=value")),
+          ?assertEqual(true,
+                       eini:is_section("spam.ini", title)),
+          ?assertEqual(false,
+                       eini:is_section("spam.ini", title1))
+        end}
+    ]
+  }.

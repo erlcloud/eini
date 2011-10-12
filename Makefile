@@ -1,11 +1,15 @@
+.PHONY: all deps compile xref eunit clean distclean qc build
+
+# covertool has warnigs, so compile first
 all: deps
+	cd deps/covertool && ../../rebar compile
 	@./rebar compile
 	make xref
 	make eunit
 
 deps:
-	@./rebar get-deps
 	@./rebar update-deps
+	@./rebar get-deps
 
 compile:
 	@./rebar compile skip_deps=true
