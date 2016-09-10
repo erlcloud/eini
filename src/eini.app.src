@@ -1,8 +1,10 @@
 {application, eini, [
     {description, "An Erlang INI parser"},
-    {vsn, "1.2.1"},
+    {vsn, git},
     {applications, [kernel, stdlib]},
     {modules, []},
     {registered, []},
-    {mod, {eini_app, []}}
+    {mod, {eini_app, []}},
+    {licenses, ["Apache 2.0"]},
+    {links, [{"Github", "https://github.com/erlcloud/eini"}]}
 ]}.
