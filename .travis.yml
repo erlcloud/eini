@@ -2,9 +2,11 @@ language: erlang
 notifications:
   email: false
 otp_release:
+  - R15B01
+  - R15B
+  - R14B04
   - R14B03
   - R14B02
-  - R14B01
 branches:
   only:
     - develop

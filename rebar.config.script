@@ -1,0 +1,31 @@
+%% -*- mode: erlang; -*-
+case erlang:function_exported(rebar3, main, 1) of
+    true ->
+        %% rebar3
+        CONFIG;
+    false ->
+        %% rebar 2.x or older
+        %% rebuild deps
+        Rebar3Deps = proplists:get_value(deps, CONFIG),
+        Rebar3TestProf = proplists:get_value(test, proplists:get_value(profiles, CONFIG)),
+        {value, {deps, Rebar3TestDeps}, Rebar3TestProf2} = lists:keytake(deps, 1, Rebar3TestProf),
+
+        %% whenever adding a new Hex package dependency, this fun should be
+        %% updated
+        HexToRepo = fun(proper) -> "https://github.com/manopapad/proper.git";
+                       (covertool) -> "https://github.com/idubrov/covertool.git"
+                    end,
+
+        ConvertDep =
+            fun({DepName, {git, Repo, {ref, Tag}}}) ->
+                    {DepName, ".*", {git, Repo, {tag, Tag}}};
+               ({DepName, {git, Repo, {branch, Branch}}}) ->
+                    {DepName, ".*", {git, Repo, {branch, Branch}}};
+               ({HexDepName, HexDepVersion}) ->
+                    {HexDepName, ".*", {git, HexToRepo(HexDepName), {tag, HexDepVersion}}}
+            end,
+
+        Rebar2Deps = [ ConvertDep(Dep) || Dep <- Rebar3Deps ++ Rebar3TestDeps ],
+
+        lists:keystore(deps, 1, CONFIG, {deps, Rebar2Deps}) ++ Rebar3TestProf2
+end.

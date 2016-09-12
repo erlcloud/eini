@@ -28,6 +28,13 @@ Result form::
 History
 =======
 
+current
+-------
+
+:release: 20XX-XX-XX
+
+- Misc changes for travis-ci
+
 1.2.1
 -----
 
