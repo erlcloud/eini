@@ -353,24 +353,24 @@ two_section_test_() ->
    fun teardown/1,
    [
     ?_assertEqual({ok, [
-                        {titleA, []},
-                        {titleB, []}
+                        {title_A, []},
+                        {'title-B', []}
                        ]},
                   parse(
-                    "[titleA]\n"
-                    "[titleB]\n"
+                    "[title_A]\n"
+                    "[title-B]\n"
                    )),
     ?_assertEqual({ok, [
-                        {titleA,
-                         [{keyA1, <<"valueA1">>}]},
-                        {titleB,
-                         [{keyB1, <<"valueB1">>}]}
+                        {'Title_A',
+                         [{'Key_A1', <<"value_A1">>}]},
+                        {'Title-B',
+                         [{'Key-B1', <<"value-B1">>}]}
                        ]},
                   parse(
-                    "[titleA]\n"
-                    "keyA1=valueA1\n"
-                    "[titleB]  \n"
-                    "keyB1=valueB1\n"
+                    "[Title_A]\n"
+                    "Key_A1=value_A1\n"
+                    "[Title-B]  \n"
+                    "Key-B1=value-B1\n"
                    ))
    ]}.
 

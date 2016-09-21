@@ -20,7 +20,7 @@
 Definitions.
 
 %% Characters for keys
-K = [a-zA-Z0-9_\.]+
+K = [a-zA-Z0-9_\-\.]+
 
 %% Characters for values, printable except =, [ and ]
 %% \x3b : $;
