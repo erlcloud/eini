@@ -205,7 +205,7 @@ one_section_title_and_one_prop_test_() ->
                    )),
     %% Multi blank lines after a prop
     ?_assertEqual({ok, [
-                        {title, 
+                        {title,
                          [{key1, <<"value1">>}]}
                        ]},
                   parse(
@@ -407,9 +407,9 @@ lex_error_title_test_() ->
    fun teardown/ 1,
    [
     %% vertical tab in section title
-    ?_assertMatch({error, {illegal_character, 1, _Reason}},
+    ?_assertMatch({error, {syntax_error, 1, _Reason}},
                   parse("[ti\vtle]")),
-    ?_assertMatch({error, {illegal_character, 3, _Reason}},
+    ?_assertMatch({error, {syntax_error, 3, _Reason}},
                   parse(
                     "[titleA]\n"
                     "keyA1=valueA1\n"
@@ -417,7 +417,7 @@ lex_error_title_test_() ->
                     "keyB1=valueB1\n"
                    ))
    ]}.
-  
+
 syntax_error_title_test_() ->
   %% TODO: Erlang 17 lost the ability to correctly report line numbers from errors.
   %% Put the numbers back in some day when the fix is released
@@ -464,7 +464,7 @@ syntax_error_title_test_() ->
                   parse("[title]\n"
                         " ;comment\n"))
    ]}.
-  
+
 syntax_error_property_test_() ->
   {setup,
    fun setup/0,
@@ -481,7 +481,7 @@ syntax_error_property_test_() ->
                   parse("[title]\n"
                         "key;comment=value\n"))
    ]}.
-  
+
 dup_title_test_() ->
   {setup,
    fun setup/0,
@@ -495,7 +495,7 @@ dup_title_test_() ->
                     "keyB1=valueB1\n"
                    ))
    ]}.
-  
+
 dup_key_test_() ->
   {setup,
    fun setup/0,
@@ -575,3 +575,26 @@ is_section_test_() ->
         end}
     ]
   }.
+
+unicode_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    ?_assertEqual({ok, [
+                        {title, [{key1, <<"юникод"/utf8>>}]}
+                       ]},
+                  parse(
+                    "[title]\n"
+                    "key1=  \xD1\x8E\xD0\xBD\xD0\xB8\xD0\xBA\xD0\xBE\xD0\xB4  \n"
+                   )),
+     ?_assertEqual({ok, [
+                        {title, [{key1, <<"юникод"/utf8>>}]}
+                       ]},
+                  parse(
+                      begin
+                          {ok, Data} = file:read_file("test/test.txt"),
+                          Data
+                      end
+                   ))
+   ]}.
