@@ -582,14 +582,14 @@ unicode_test_() ->
    fun teardown/1,
    [
     ?_assertEqual({ok, [
-                        {title, [{key1, <<"юникод"/utf8>>}]}
+                        {title, [{key1, <<"\xD1\x8E\xD0\xBD\xD0\xB8\xD0\xBA\xD0\xBE\xD0\xB4">>}]}
                        ]},
                   parse(
                     "[title]\n"
                     "key1=  \xD1\x8E\xD0\xBD\xD0\xB8\xD0\xBA\xD0\xBE\xD0\xB4  \n"
                    )),
      ?_assertEqual({ok, [
-                        {title, [{key1, <<"юникод"/utf8>>}]}
+                        {title, [{key1, <<"\xD1\x8E\xD0\xBD\xD0\xB8\xD0\xBA\xD0\xBE\xD0\xB4">>}]}
                        ]},
                    parse(
                      <<91,116,105,116,108,101,93,10,107,101,121,49,61,209,142,208,189,208,184,208,186,208,190,208,180,10>>
