@@ -591,10 +591,7 @@ unicode_test_() ->
      ?_assertEqual({ok, [
                         {title, [{key1, <<"юникод"/utf8>>}]}
                        ]},
-                  parse(
-                      begin
-                          {ok, Data} = file:read_file("test/test.txt"),
-                          Data
-                      end
+                   parse(
+                     <<91,116,105,116,108,101,93,10,107,101,121,49,61,209,142,208,189,208,184,208,186,208,190,208,180,10>>
                    ))
    ]}.
