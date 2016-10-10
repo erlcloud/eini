@@ -4,6 +4,8 @@ Eini - An Erlang INI parser
 
 :Original: https://github.com/devinus/zucchini
 
+[![Build Status](https://secure.travis-ci.org/erlcloud/eini.png?branch=master)](http://travis-ci.org/erlcloud/eini)
+
 Example
 =======
 
@@ -28,34 +30,24 @@ Result form::
 History
 =======
 
-current
+1.2.4
 -------
+- Unicode in values
 
-:release: 20XX-XX-XX
-
-- Misc changes for travis-ci
+1.2.3
+-------
+- Misc changes Hex and pre-R18
 
 1.2.1
 -----
-
-:release: 2011-10-12
-
 - cobertura report with covertool
 
 1.2.0
 -----
-
-:release: 2011-10-05
-
 - no change 1.1.0
 
 1.1.0
 -----
-
-**proposal**
-
-:release: 2011-08-24
-:summary: ETS To Store the ini data
 
 - To Store ini data.
 
