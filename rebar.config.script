@@ -12,9 +12,7 @@ case erlang:function_exported(rebar3, main, 1) of
 
         %% whenever adding a new Hex package dependency, this fun should be
         %% updated
-        HexToRepo = fun(proper) -> "https://github.com/manopapad/proper.git";
-                       (covertool) -> "https://github.com/idubrov/covertool.git"
-                    end,
+        HexToRepo = fun(proper) -> "https://github.com/manopapad/proper.git" end,
 
         ConvertDep =
             fun({DepName, {git, Repo, {ref, Tag}}}) ->
