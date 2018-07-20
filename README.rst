@@ -4,7 +4,9 @@ Eini - An Erlang INI parser
 
 :Original: https://github.com/devinus/zucchini
 
-[![Build Status](https://secure.travis-ci.org/erlcloud/eini.png?branch=master)](http://travis-ci.org/erlcloud/eini)
+.. image:: https://secure.travis-ci.org/erlcloud/eini.png?branch=master
+    :target: https://travis-ci.org/erlcloud/eini
+    :alt: Build Status
 
 Example
 =======
