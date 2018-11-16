@@ -106,5 +106,5 @@ value_of(Token) ->
 
 -spec strip_values([TokenChars::string()]) -> Value::binary().
 strip_values(Values) ->
-  String = string:strip(string:strip(lists:flatten(Values), both, $\s), both, $\t),
+  String = string:trim(string:trim(lists:flatten(Values), both, "\s"), both, "\t"),
   list_to_binary(String).
