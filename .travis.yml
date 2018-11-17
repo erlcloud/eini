@@ -5,7 +5,9 @@ otp_release:
   - R16B03-1
   - 17.5
   - 18.3
-  - 19.0
+  - 19.3
+  - 20.3
+  - 21.1
 branches:
   only:
     - master
