@@ -33,12 +33,20 @@ one_section_title_only_test_() ->
                    )),
     ?_assertEqual({ok, []},
                   parse(
+                      "#"
+                  )),
+    ?_assertEqual({ok, []},
+                  parse(
                     ";    "
                    )),
     ?_assertEqual({ok, []},
                   parse(
                     "; comment"
                    )),
+    ?_assertEqual({ok, []},
+                  parse(
+                      "# comment"
+                  )),
     ?_assertEqual({ok, []},
                   parse(
                     "; comment in Japanese 日本語"
@@ -62,7 +70,8 @@ one_section_title_only_test_() ->
                         {title, []}
                        ]},
                   parse(
-                    "; comment line\n"
+                    "; comment line 1\n"
+                    "# comment line 2\n"
                     "  \n"
                     "[title]\n"
                    )),
@@ -70,7 +79,7 @@ one_section_title_only_test_() ->
                         {title, []}
                        ]},
                   parse(
-                    "; comment line\n"
+                    "# comment line\n"
                     "; comment line 2\n"
                     "  \n"
                     "[title]\n"

@@ -23,16 +23,18 @@ Definitions.
 K = [a-zA-Z0-9_\-\.]+
 
 
+%% \x23 : $#
 %% \x3b : $;
 %% \x3d : $=
 %% \x5b : $[
 %% \x5d : $]
-V = [^\x3b\x3d\x5b\x5d\x0d\x0a\s\t]+
+V = [^\x23\x3b\x3d\x5b\x5d\x0d\x0a\s\t]+
 
 
-%% spaces and breaks
+%% spaces, breaks and comment delimiters
 S = [\s\t]
 B = [\n\r]
+C = [;#]
 
 Rules.
 
@@ -53,6 +55,6 @@ Rules.
 {V}              : {token, {value,   TokenLine, TokenChars}}.
 
 %% comment-like token, but may be a part of value depending on the location
-;.*              : {token, {comment, TokenLine, TokenChars}}.
+{C}.*            : {token, {comment, TokenLine, TokenChars}}.
 
 Erlang code.
