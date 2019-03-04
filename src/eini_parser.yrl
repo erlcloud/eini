@@ -42,14 +42,14 @@ Terminals
 
 Rootsymbol whole.
 
-%% Leex smash out all blank lines, but at the beggining of file is NOT.
+%% Leex smash out all blank lines, but at the beginning of file is NOT.
 whole -> sections_with_skip_lines : '$1'.
 whole -> blank_line sections_with_skip_lines : '$2'.
 
 blank_line -> blank break : '$1'.
 
 %% Comment lines are treated as:
-%% 1. At the biggining of file are included into sections_with_skip_lines
+%% 1. At the beginning of file are included into sections_with_skip_lines
 %% 2. Other comment lines are included to title_part and property_with_skip_lines
 
 skip_lines -> comment_line : ['$1'].
