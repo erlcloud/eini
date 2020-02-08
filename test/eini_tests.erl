@@ -138,7 +138,44 @@ one_section_title_only_test_() ->
                     "[title]  \n"
                     "\n"
                     "\n"
-                   ))
+                   )),
+    %% blank char in section title
+    ?_assertEqual({ok, [
+                        {'tit le', []}
+                       ]},
+                  parse("[tit le]")),
+    ?_assertEqual({ok, [
+                        {'tit le A', []}
+                       ]},
+                  parse("[tit le A]")),
+    ?_assertEqual({ok, [
+                        {'tit le A', []}
+                       ]},
+                  parse("[  tit le A  ]")),
+    ?_assertEqual({ok, [
+                        {'tit  le', []}
+                       ]},
+                  parse("[  tit  le]")),
+    ?_assertEqual({ok, [
+                        {'tit le', []}
+                       ]},
+                  parse("[tit le  ]")),
+    ?_assertEqual({ok, [
+                        {'tit  le', []}
+                       ]},
+                  parse("[  tit  le  ]")),
+    ?_assertEqual({ok, [
+                        {'title', []}
+                       ]},
+                  parse("[  title  ]")),
+    ?_assertEqual({ok, [
+                        {'title', []}
+                       ]},
+                  parse("[  title]")),
+    ?_assertEqual({ok, [
+                        {'title', []}
+                       ]},
+                  parse("[title  ]"))
    ]}.
 
 one_section_title_only_syntax_error_test_() ->
@@ -457,14 +494,6 @@ syntax_error_title_test_() ->
                         ";\n"
                         "; comment 2\n"
                         "  [title]")),
-    %% blank char in section title
-    ?_assertMatch({error, {syntax_error, _, _Reason}},
-                  parse(
-                    "[titleA]\n"
-                    "keyA1=valueA1\n"
-                    "[tit  leB]\n"
-                    "keyB1=valueB1\n"
-                   )),
     %% comment after title
     ?_assertMatch({error, {syntax_error, _, ["syntax error before: ", _]}},
                   parse("[title] ;comment")),
