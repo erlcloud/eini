@@ -349,6 +349,20 @@ one_section_title_and_one_prop_test_() ->
                     "[title]  \n"
                     "key1=  value1  \n"
                    )),
+    %% nested properties: https://docs.aws.amazon.com/credref/latest/refdocs/file-format.html
+    ?_assertEqual({ok, [
+                        {title, [{key1,[{key11,<<"value11">>},{key12,<<"value12">>},{key13,<<"value13">>},{key14,<<"value14">>}]},{key2,<<"value2">>}]}
+                       ]},
+                  parse(
+                    "[title]\n"
+                    "key1 =\n"
+                    " key11=value11\n"
+                    " key12 =value12\n"
+                    " key13= value13\n"
+                    " key14 = value14\n"
+                    "key2=value2\n"
+                   )),
+
     %% value has characters which can not used in titles or keys
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1$% '""#!+*=@/:+">>}]}
