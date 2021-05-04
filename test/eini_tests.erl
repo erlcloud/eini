@@ -349,20 +349,6 @@ one_section_title_and_one_prop_test_() ->
                     "[title]  \n"
                     "key1=  value1  \n"
                    )),
-    %% nested properties: https://docs.aws.amazon.com/credref/latest/refdocs/file-format.html
-    ?_assertEqual({ok, [
-                        {title, [{key1,[{key11,<<"value11">>},{key12,<<"value12">>},{key13,<<"value13">>},{key14,<<"value14">>}]},{key2,<<"value2">>}]}
-                       ]},
-                  parse(
-                    "[title]\n"
-                    "key1 =\n"
-                    " key11=value11\n"
-                    " key12 =value12\n"
-                    " key13= value13\n"
-                    " key14 = value14\n"
-                    "key2=value2\n"
-                   )),
-
     %% value has characters which can not used in titles or keys
     ?_assertEqual({ok, [
                         {title, [{key1, <<"value1$% '""#!+*=@/:+">>}]}
@@ -461,6 +447,84 @@ binary_two_section_test_() ->
                    ))
    ]}.
 
+nested_properties_test_() ->
+  %% https://docs.aws.amazon.com/credref/latest/refdocs/file-format.html
+  {setup,
+   fun setup/0,
+   fun teardown/ 1,
+   [
+    ?_assertEqual({ok, [
+                        {title,
+                         [{key1, [{key11, <<"value11">>},
+                                  {key12, <<"value12">>}]}]}
+                       ]},
+                  parse(
+                    "[title]\n"
+                    "key1=\n"
+                    "  key11=value11\n"
+                    "  key12 =value12\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {title,
+                         [{key1, [{key11, <<"value11">>},
+                                  {key12, <<"value12">>},
+                                  {key13, <<"value13">>},
+                                  {key14, <<"value14">>}]},
+                          {key2, <<"value2">>}]}
+                       ]},
+                  parse(
+                    "[title]\n"
+                    "key1 =\n"
+                    " key11=value11\n"
+                    " key12 =value12\n"
+                    " key13= value13\n"
+                    " key14 = value14\n"
+                    "key2=value2\n"
+                   )),
+    ?_assertEqual({ok, [
+                        {title,
+                         [{key1, [{key11, <<"value11">>}]},
+                          {key2, <<"value2">>}]}
+                       ]},
+                  parse(
+                    "[title]\n"
+                    "key1= \n"
+                    " key11=value11\n"
+                    "key2=value2\n"
+                   )),
+    %% with comments in/between nested properties
+    ?_assertEqual({ok, [
+                        {title,
+                         [{key1, [{key11, <<"value11">>},
+                                  {key12, <<"value12">>}]},
+                          {key2, <<"value2">>}]}
+                       ]},
+                  parse(
+                    "[title]\n"
+                    "key1= \n"
+                    " ; comment in nested properties\n"
+                    " key11 = value11\n"
+                    " ; comment between nested properties\n"
+                    " key12 = value12\n"
+                    "key2=value2\n"
+                   ))%,
+    %% with comments at end of nested properties (TODO Fix this case)
+    % ?_assertEqual({ok, [
+    %                     {title,
+    %                      [{key1, [{key11, <<"value11">>},
+    %                               {key12, <<"value12">>}]},
+    %                       {key2, <<"value2">>}]}
+    %                    ]},
+    %               parse(
+    %                 "[title]\n"
+    %                 "key1= \n"
+    %                 " key11 = value11\n"
+    %                 " key12 = value12\n"
+    %                 "; comment after nested properties\n"
+    %                 "key2=value2\n"
+    %                ))
+   ]}.
+
 lex_error_title_test_() ->
   {setup,
    fun setup/0,
@@ -532,6 +596,26 @@ syntax_error_property_test_() ->
     ?_assertMatch({error, {syntax_error, 2, ["syntax error before: ", _]}},
                   parse("[title]\n"
                         "key;comment=value\n"))
+   ]}.
+
+syntax_error_nested_property_test_() ->
+  {setup,
+   fun setup/0,
+   fun teardown/1,
+   [
+    %% no nested properties after open
+    ?_assertMatch({error, {syntax_error, 2, ["syntax error before: ", _]}},
+                  parse(
+                    "[title]\n"
+                    "key1 =\n"
+                   )),
+    %% no nested properties after open (with following key)
+    ?_assertMatch({error, {syntax_error, 3, ["syntax error before: ", _]}},
+                  parse(
+                    "[title]\n"
+                    "key1=\n"
+                    "key2=value2\n"
+                   ))
    ]}.
 
 dup_title_test_() ->

@@ -28,7 +28,8 @@ Nonterminals
   title
   property_with_skip_lines
   properties property_base property
-  properties_nested property_nested
+  properties_nested property_nested_open property_nested
+  indentation
   key_part
   values single_value
   skip_lines
@@ -88,16 +89,23 @@ property_with_skip_lines -> property : '$1'.
 property_with_skip_lines -> property skip_lines : '$1'.
 
 property_base -> key_part '=' values break :
-              {list_to_atom(value_of('$1')), strip_values('$3')}.
+                   {list_to_atom(value_of('$1')), strip_values('$3')}.
 
 property -> property_base : '$1'.
-property -> key_part '=' break properties_nested :
-              {list_to_atom(value_of('$1')), '$4'}.
+property -> property_nested_open properties_nested :
+              {list_to_atom(value_of('$1')), '$2'}.
+
+property_nested_open -> key_part '=' break : '$1'.
+property_nested_open -> key_part '=' blank break : '$1'.
 
 properties_nested -> property_nested : ['$1'].
 properties_nested -> property_nested properties_nested : ['$1' | '$2'].
 
-property_nested -> blank property_base : '$2'.
+property_nested -> indentation property_base : '$2'.
+
+indentation -> blank : $1.
+indentation -> blank skip_lines blank : $1.
+indentation -> skip_lines blank : $2.
 
 key_part -> word : '$1'.
 key_part -> word blank : '$1'.
@@ -115,6 +123,8 @@ single_value ->  comment : value_of('$1').
 single_value -> '['      : "[".
 single_value -> '='      : "=".
 single_value -> ']'      : "]".
+
+Expect 3.
 
 Erlang code.
 
